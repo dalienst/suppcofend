@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@theme {
+  --color-contractor: #1b4332;
+  --color-contractor-foreground: #d8f3dc;
+  --color-supplier: #1e40af;
+  --color-supplier-foreground: #dbeafe;
+  
+  --color-jungle-50: #f0fdf4;
+  --color-jungle-100: #dcfce7;
+  --color-jungle-200: #bbf7d0;
+  --color-jungle-300: #86efac;
+  --color-jungle-400: #4ade80;
+  --color-jungle-500: #22c55e;
+  --color-jungle-600: #16a34a;
+  --color-jungle-700: #15803d;
+  --color-jungle-800: #166534;
+  --color-jungle-900: #14532d;
+  --color-jungle-950: #052e16;
+
+  --color-suppblue-50: #eff6ff;
+  --color-suppblue-100: #dbeafe;
+  --color-suppblue-200: #bfdbfe;
+  --color-suppblue-300: #93c5fd;
+  --color-suppblue-400: #60a5fa;
+  --color-suppblue-500: #3b82f6;
+  --color-suppblue-600: #2563eb;
+  --color-suppblue-700: #1d4ed8;
+  --color-suppblue-800: #1e40af;
+  --color-suppblue-900: #1e3a8a;
+  --color-suppblue-950: #172554;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #0f172a;
+  --primary-foreground: #f8fafc;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
+  --destructive: #ef4444;
+  --destructive-foreground: #f8fafc;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #0f172a;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --card: #0f172a;
+  --card-foreground: #f8fafc;
+  --popover: #0f172a;
+  --popover-foreground: #f8fafc;
+  --primary: #f8fafc;
+  --primary-foreground: #0f172a;
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+  --destructive: #7f1d1d;
+  --destructive-foreground: #f8fafc;
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #cbd5e1;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
