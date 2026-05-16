@@ -90,7 +90,7 @@ export function Navbar() {
                 <UserIcon className="w-4 h-4" />
               </div>
               <button 
-                onClick={() => signOut()}
+                onClick={() => signOut({ redirectTo: "/login" })}
                 className="p-2 hover:bg-red-50 hover:text-red-600 rounded-full text-slate-400 transition-colors"
                 title="Sign Out"
               >
