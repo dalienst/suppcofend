@@ -13,7 +13,9 @@ import {
   CreditCard,
   FileText,
   Warehouse,
-  ChevronRight
+  ChevronRight,
+  Building2,
+  Briefcase
 } from "lucide-react"
 
 interface SidebarProps {
@@ -25,6 +27,7 @@ export function Sidebar({ role = "none" }: SidebarProps) {
   
   const contractorLinks = [
     { name: "Dashboard", href: "/contractor/dashboard", icon: LayoutDashboard },
+    { name: "Business Profile", href: "/contractor/company", icon: Building2 },
     { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
     { name: "My Orders", href: "/contractor/orders", icon: Truck },
     { name: "Payments", href: "/contractor/payments", icon: CreditCard },
@@ -33,6 +36,7 @@ export function Sidebar({ role = "none" }: SidebarProps) {
 
   const supplierLinks = [
     { name: "Overview", href: "/supplier/dashboard", icon: LayoutDashboard },
+    { name: "Business Profile", href: "/supplier/company", icon: Building2 },
     { name: "Products", href: "/supplier/products", icon: Package },
     { name: "Fulfillment", href: "/supplier/fulfillment", icon: Truck },
     { name: "Invoices", href: "/supplier/invoices", icon: FileText },
