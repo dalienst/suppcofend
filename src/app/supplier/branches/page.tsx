@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import api from "@/lib/api"
+import Link from "next/link"
 import { 
   Building2, 
   MapPin, 
@@ -16,7 +17,8 @@ import {
   MoreVertical,
   Edit2,
   Trash2,
-  X
+  X,
+  ExternalLink
 } from "lucide-react"
 
 // Types
@@ -167,12 +169,15 @@ export default function SupplierBranchesPage() {
                 {branches.map((branch: Branch) => (
                   <tr key={branch.reference} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-suppblue-50 text-suppblue-600 rounded-xl flex items-center justify-center shrink-0">
+                      <Link href={`/supplier/branches/${branch.reference}`} className="flex items-center gap-3 group/link hover:opacity-95">
+                        <div className="w-10 h-10 bg-suppblue-50 text-suppblue-600 rounded-xl flex items-center justify-center shrink-0 group-hover/link:bg-suppblue-600 group-hover/link:text-white transition-colors">
                           <Building2 className="w-5 h-5" />
                         </div>
-                        <span className="font-bold text-slate-900">{branch.name}</span>
-                      </div>
+                        <span className="font-bold text-slate-900 group-hover/link:text-suppblue-700 transition-colors flex items-center gap-1">
+                          {branch.name}
+                          <ExternalLink className="w-3 h-3 opacity-0 group-hover/link:opacity-100 transition-opacity text-slate-400" />
+                        </span>
+                      </Link>
                     </td>
                     <td className="px-6 py-4 text-slate-500 font-mono text-xs">
                       {branch.reference}
