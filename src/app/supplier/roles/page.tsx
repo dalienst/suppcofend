@@ -264,6 +264,60 @@ export default function SupplierRolesPage() {
         </div>
       )}
 
+      {/* Available Permissions Reference Section */}
+      <div className="mt-12 space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">System Permissions Reference</h2>
+          <p className="text-slate-500 mt-1">A complete list of all assignable permissions across the platform.</p>
+        </div>
+
+        {isLoadingPermissions ? (
+          <div className="flex items-center justify-center min-h-[150px]">
+            <Loader2 className="w-6 h-6 animate-spin text-suppblue-600" />
+          </div>
+        ) : availablePermissions.length === 0 ? (
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-8 text-center text-slate-500 text-sm">
+            No permissions are currently defined in the system.
+          </div>
+        ) : (
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-slate-50/50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider text-xs">
+                  <tr>
+                    <th className="px-6 py-4">Permission Name</th>
+                    <th className="px-6 py-4">System Codename</th>
+                    <th className="px-6 py-4">Description</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {availablePermissions.map((permission: Permission) => (
+                    <tr key={permission.reference} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-suppblue-50 text-suppblue-600 rounded-lg flex items-center justify-center shrink-0">
+                            <ShieldCheck className="w-4 h-4" />
+                          </div>
+                          <span className="font-bold text-slate-900">{permission.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <code className="text-[10px] text-slate-500 bg-slate-100 px-2 py-1 rounded-md font-mono">
+                          {permission.codename}
+                        </code>
+                      </td>
+                      <td className="px-6 py-4 text-slate-600">
+                        {permission.description || <span className="text-slate-400 italic">No description provided</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Create/Edit Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">

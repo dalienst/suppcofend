@@ -16,7 +16,8 @@ import {
   ChevronRight,
   Building2,
   Briefcase,
-  ShieldCheck
+  ShieldCheck,
+  PackageSearch
 } from "lucide-react"
 
 interface SidebarProps {
@@ -39,6 +40,7 @@ export function Sidebar({ role = "none" }: SidebarProps) {
     { name: "Overview", href: "/supplier/dashboard", icon: LayoutDashboard },
     { name: "Business Profile", href: "/supplier/company", icon: Building2 },
     { name: "Branch Mgmt", href: "/supplier/branches", icon: Warehouse },
+    { name: "Inventory", href: "/supplier/inventory", icon: PackageSearch },
     { name: "Roles", href: "/supplier/roles", icon: ShieldCheck },
     { name: "Products", href: "/supplier/products", icon: Package },
     { name: "Fulfillment", href: "/supplier/fulfillment", icon: Truck },
