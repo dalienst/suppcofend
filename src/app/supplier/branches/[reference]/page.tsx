@@ -107,7 +107,7 @@ export default function SupplierBranchDetailPage() {
   }
 
   return (
-    <div className="p-4 mx-auto space-y-8 max-w-7xl animate-in fade-in-50 duration-300">
+    <div className="p-4 mx-auto space-y-8 animate-in fade-in-50 duration-300">
       
       {/* 1. Header & Navigation Back */}
       <div className="space-y-4">
