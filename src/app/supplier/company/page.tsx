@@ -29,7 +29,7 @@ const companySchema = z.object({
   address: z.string().optional().or(z.literal("")),
   registration_number: z.string().optional().or(z.literal("")),
   kra_pin: z.string().optional().or(z.literal("")),
-  vat_compliance: z.preprocess((val) => !!val, z.boolean()),
+  vat_compliance: z.boolean(),
   vat_number: z.string().optional().or(z.literal("")),
   currency: z.string().optional().or(z.literal("")),
   fiscal_year: z.string().optional().or(z.literal("")),
