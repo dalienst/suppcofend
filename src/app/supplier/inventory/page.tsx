@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -39,6 +40,7 @@ const inventorySchema = z.object({
 type InventoryValues = z.infer<typeof inventorySchema>
 
 export default function SupplierInventoryPage() {
+  const router = useRouter()
   const queryClient = useQueryClient()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingInventory, setEditingInventory] = useState<Inventory | null>(null)
@@ -105,7 +107,8 @@ export default function SupplierInventoryPage() {
     setIsModalOpen(true)
   }
 
-  const openModalForEdit = (inv: Inventory) => {
+  const openModalForEdit = (e: React.MouseEvent, inv: Inventory) => {
+    e.stopPropagation()
     setEditingInventory(inv)
     reset({ 
       name: inv.name, 
@@ -176,7 +179,11 @@ export default function SupplierInventoryPage() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {inventories.map((inv: Inventory) => (
-                  <tr key={inv.inventory_code} className="hover:bg-slate-50/50 transition-colors group">
+                  <tr 
+                    key={inv.inventory_code} 
+                    onClick={() => router.push(`/supplier/inventory/${inv.inventory_code}`)}
+                    className="hover:bg-slate-50/50 transition-colors group cursor-pointer"
+                  >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-suppblue-50 text-suppblue-600 rounded-xl flex items-center justify-center shrink-0">
@@ -202,14 +209,14 @@ export default function SupplierInventoryPage() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button 
-                          onClick={() => openModalForEdit(inv)}
+                          onClick={(e) => openModalForEdit(e, inv)}
                           className="p-1.5 text-slate-400 hover:text-suppblue-600 hover:bg-suppblue-50 rounded-lg transition-colors"
                           title="Edit Inventory"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button 
-                          onClick={() => setDeletingInventory(inv)}
+                          onClick={(e) => { e.stopPropagation(); setDeletingInventory(inv) }}
                           className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete Inventory"
                         >
