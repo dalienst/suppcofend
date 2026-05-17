@@ -22,7 +22,9 @@ import {
   FileText,
   BadgeInfo,
   Link,
-  Unlink
+  Unlink,
+  Pencil,
+  Trash2
 } from "lucide-react"
 import toast from "react-hot-toast"
 import { cn } from "@/lib/utils"
@@ -81,7 +83,7 @@ const inviteSchema = z.object({
   last_name: z.string().min(1, "Last name is required"),
   username: z.string().min(3, "Username must be at least 3 characters"),
   email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Temporary password must be at least 6 characters"),
+  password: z.string().optional().or(z.literal("")),
   phone: z.string().optional().or(z.literal("")),
   identification: z.string().optional().or(z.literal("")),
   kra_pin: z.string().optional().or(z.literal("")),
@@ -96,6 +98,7 @@ export default function SupplierStaffPage() {
   const queryClient = useQueryClient()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [assigningEmployee, setAssigningEmployee] = useState<EmployeeUser | null>(null)
+  const [editingEmployee, setEditingEmployee] = useState<EmployeeUser | null>(null)
   
   // React Hook Form for employee invitation
   const { register, handleSubmit, reset, control, formState: { errors } } = useForm<InviteValues>({
@@ -214,12 +217,80 @@ export default function SupplierStaffPage() {
     }
   })
 
+  // 4. Edit Employee Profile
+  const editMutation = useMutation({
+    mutationFn: async (data: InviteValues) => {
+      if (!editingEmployee) return
+      return api.patch(`/api/v1/auth/add/employee/${editingEmployee.username}/`, {
+        ...data,
+        company: company?.identity,
+        role: data.role,
+        branch: data.branch || null,
+        password: data.password || undefined
+      })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["supplier-staff"] })
+      toast.success("Employee details updated successfully.")
+      closeModal()
+    },
+    onError: (err: any) => {
+      const errMsg = err?.response?.data?.non_field_errors?.[0] || 
+                     err?.response?.data?.first_name?.[0] || 
+                     err?.response?.data?.email?.[0] || 
+                     "Failed to update employee details."
+      toast.error(errMsg)
+    }
+  })
+
+  // 5. Delete/Deactivate Employee Profile
+  const deleteMutation = useMutation({
+    mutationFn: async (username: string) => {
+      return api.delete(`/api/v1/auth/add/employee/${username}/`)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["supplier-staff"] })
+      toast.success("Employee account deleted/deactivated successfully.")
+    },
+    onError: (err: any) => {
+      const errMsg = err?.response?.data?.detail || "Failed to delete employee."
+      toast.error(errMsg)
+    }
+  })
+
   const onSubmit = (data: InviteValues) => {
-    inviteMutation.mutate(data)
+    if (!editingEmployee && !data.password) {
+      toast.error("Temporary password is required for new invites.")
+      return
+    }
+    if (editingEmployee) {
+      editMutation.mutate(data)
+    } else {
+      inviteMutation.mutate(data)
+    }
+  }
+
+  const openEditModal = (employee: EmployeeUser) => {
+    setEditingEmployee(employee)
+    reset({
+      first_name: employee.first_name || "",
+      last_name: employee.last_name || "",
+      username: employee.username || "",
+      email: employee.email || "",
+      password: "",
+      phone: employee.phone || "",
+      identification: employee.identification || "",
+      kra_pin: employee.kra_pin || "",
+      location: employee.location || "",
+      role: employee.employment?.[0]?.role || "",
+      branch: employee.assigned_branch || "",
+    })
+    setIsModalOpen(true)
   }
 
   const closeModal = () => {
     setIsModalOpen(false)
+    setEditingEmployee(null)
     reset({
       first_name: "",
       last_name: "",
@@ -406,14 +477,37 @@ export default function SupplierStaffPage() {
 
                         {/* Active Indicator & Actions */}
                         <td className="px-6 py-4 text-right">
-                          <span className={cn(
-                            "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide",
-                            employment?.is_active 
-                              ? "bg-emerald-50 text-emerald-700 border border-emerald-100" 
-                              : "bg-red-50 text-red-700 border border-red-100"
-                          )}>
-                            {employment?.is_active ? "Active" : "Inactive"}
-                          </span>
+                          <div className="flex items-center justify-end gap-3">
+                            <span className={cn(
+                              "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide shrink-0",
+                              employment?.is_active 
+                                ? "bg-emerald-50 text-emerald-700 border border-emerald-100" 
+                                : "bg-red-50 text-red-700 border border-red-100"
+                            )}>
+                              {employment?.is_active ? "Active" : "Inactive"}
+                            </span>
+                            <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={() => openEditModal(employee)}
+                                className="p-1.5 text-slate-400 hover:text-suppblue-700 hover:bg-suppblue-50 rounded-lg transition-all"
+                                title="Edit Staff Profile"
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (confirm(`Are you absolutely sure you want to delete and deactivate ${employee.first_name} ${employee.last_name}?`)) {
+                                    deleteMutation.mutate(employee.username)
+                                  }
+                                }}
+                                disabled={deleteMutation.isPending}
+                                className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                title="Delete/Deactivate Employee"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
                         </td>
                       </tr>
                     )
@@ -490,8 +584,14 @@ export default function SupplierStaffPage() {
           <div className="bg-white rounded-3xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between p-6 border-b border-slate-100 shrink-0">
               <div>
-                <h2 className="font-black text-xl text-slate-900">Invite Corporate Personnel</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Dispatches temporary credentials to employee's mailbox instantly.</p>
+                <h2 className="font-black text-xl text-slate-900">
+                  {editingEmployee ? "Edit Staff Profile" : "Invite Corporate Personnel"}
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {editingEmployee 
+                    ? `Update contact credentials and assignments for ${editingEmployee.first_name}.` 
+                    : "Dispatches temporary credentials to employee's mailbox instantly."}
+                </p>
               </div>
               <button 
                 onClick={closeModal}
@@ -534,7 +634,8 @@ export default function SupplierStaffPage() {
                       <label className="text-xs font-bold text-slate-700 ml-0.5">Username *</label>
                       <input
                         {...register("username")}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none"
+                        disabled={!!editingEmployee}
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none disabled:opacity-60 disabled:cursor-not-allowed"
                         placeholder="e.g. johndoe"
                       />
                       {errors.username && <p className="text-[10px] text-red-500 ml-0.5">{errors.username.message}</p>}
@@ -553,12 +654,14 @@ export default function SupplierStaffPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-700 ml-0.5">Temporary Credentials Password *</label>
+                    <label className="text-xs font-bold text-slate-700 ml-0.5">
+                      {editingEmployee ? "Update Password (Leave blank to keep current)" : "Temporary Credentials Password *"}
+                    </label>
                     <input
                       type="text"
                       {...register("password")}
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none font-mono"
-                      placeholder="Input temporary pass for their initial login"
+                      placeholder={editingEmployee ? "Optional new password" : "Input temporary pass for their initial login"}
                     />
                     {errors.password && <p className="text-[10px] text-red-500 ml-0.5">{errors.password.message}</p>}
                   </div>
@@ -656,15 +759,15 @@ export default function SupplierStaffPage() {
               <button
                 type="submit"
                 form="invite-form"
-                disabled={inviteMutation.isPending}
+                disabled={inviteMutation.isPending || editMutation.isPending}
                 className="flex-1 py-3 bg-suppblue-600 hover:bg-suppblue-700 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-70 shadow-sm text-xs"
               >
-                {inviteMutation.isPending ? (
+                {inviteMutation.isPending || editMutation.isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   <>
-                    <UserPlus className="w-4 h-4" />
-                    Send Corporate Invite
+                    {editingEmployee ? <UserCheck className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />}
+                    <span>{editingEmployee ? "Save Changes" : "Send Corporate Invite"}</span>
                   </>
                 )}
               </button>
