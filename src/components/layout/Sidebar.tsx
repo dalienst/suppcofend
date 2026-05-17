@@ -15,7 +15,8 @@ import {
   Warehouse,
   ChevronRight,
   Building2,
-  Briefcase
+  Briefcase,
+  ShieldCheck
 } from "lucide-react"
 
 interface SidebarProps {
@@ -37,10 +38,11 @@ export function Sidebar({ role = "none" }: SidebarProps) {
   const supplierLinks = [
     { name: "Overview", href: "/supplier/dashboard", icon: LayoutDashboard },
     { name: "Business Profile", href: "/supplier/company", icon: Building2 },
+    { name: "Branch Mgmt", href: "/supplier/branches", icon: Warehouse },
+    { name: "Roles", href: "/supplier/roles", icon: ShieldCheck },
     { name: "Products", href: "/supplier/products", icon: Package },
     { name: "Fulfillment", href: "/supplier/fulfillment", icon: Truck },
     { name: "Invoices", href: "/supplier/invoices", icon: FileText },
-    { name: "Branch Mgmt", href: "/supplier/branches", icon: Warehouse },
     { name: "Staff", href: "/supplier/staff", icon: Users },
   ]
 
