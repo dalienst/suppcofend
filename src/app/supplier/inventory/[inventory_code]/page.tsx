@@ -20,6 +20,7 @@ import {
   ArrowLeft,
   X
 } from "lucide-react"
+import toast from "react-hot-toast"
 
 // --- Types ---
 interface MiniProduct {
@@ -450,7 +451,11 @@ export default function InventoryExplorerPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["inventory-detail", inventory_code] })
+      toast.success(`${modalState.type.charAt(0).toUpperCase() + modalState.type.slice(1)} created successfully!`)
       closeModal()
+    },
+    onError: () => {
+      toast.error(`Failed to create ${modalState.type}.`)
     }
   })
 
@@ -470,7 +475,12 @@ export default function InventoryExplorerPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["supplier-products"] })
+      queryClient.invalidateQueries({ queryKey: ["inventory-detail", inventory_code] })
+      toast.success("Product linked successfully!")
       closeProductModal()
+    },
+    onError: () => {
+      toast.error("Failed to link product.")
     }
   })
 
@@ -485,7 +495,12 @@ export default function InventoryExplorerPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["supplier-products"] })
+      queryClient.invalidateQueries({ queryKey: ["inventory-detail", inventory_code] })
+      toast.success("Product created and assigned successfully!")
       closeProductModal()
+    },
+    onError: () => {
+      toast.error("Failed to create product.")
     }
   })
 
