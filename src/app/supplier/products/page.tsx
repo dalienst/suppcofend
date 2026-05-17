@@ -80,15 +80,18 @@ export default function SupplierProductsPage() {
               ) : products?.map((product: any) => (
                 <tr key={product.reference} className="hover:bg-slate-50 transition-colors group text-sm">
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
+                    <Link 
+                      href={`/supplier/products/${product.reference}`} 
+                      className="flex items-center gap-3 group-hover:text-suppblue-600 transition-colors"
+                    >
                       <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:bg-suppblue-50 group-hover:text-suppblue-600 transition-colors">
                         <Package className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="font-bold text-slate-900">{product.product_name}</p>
+                        <p className="font-bold text-slate-900 group-hover:text-suppblue-600 transition-colors">{product.product_name}</p>
                         <p className="text-[10px] text-slate-400 uppercase tracking-tighter">REF: {product.reference}</p>
                       </div>
-                    </div>
+                    </Link>
                   </td>
                   <td className="px-6 py-4">
                     <p className="font-bold text-slate-900">{product.quantity}</p>
@@ -103,9 +106,13 @@ export default function SupplierProductsPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all">
-                      <MoreVertical className="w-4 h-4" />
-                    </button>
+                    <Link 
+                      href={`/supplier/products/${product.reference}`}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-suppblue-700 bg-suppblue-50 hover:bg-suppblue-100 rounded-xl transition-all"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                      Manage
+                    </Link>
                   </td>
                 </tr>
               ))}
