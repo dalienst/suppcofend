@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { cn } from "@/lib/utils"
 import * as z from "zod"
 import { 
   useLayers, 
@@ -10,8 +11,7 @@ import {
   useSublayerItems, 
   useBrackets, 
   usePaymentOptions,
-  useBranches,
-  useSites
+  useBranches
 } from "@/hooks/useInventory"
 import { Loader2, Plus, Info, Check } from "lucide-react"
 import api from "@/lib/api"
@@ -23,7 +23,6 @@ const productSchema = z.object({
   sublayeritem: z.string().min(1, "Sublayer Item is required"),
   bracket: z.string().min(1, "Bracket is required"),
   branch: z.string().optional(),
-  site: z.string().optional(),
   product_name: z.string().min(3, "Product name is too short"),
   quantity: z.number().min(1, "Quantity must be at least 1"),
   unit: z.string().min(1, "Unit is required"),
@@ -61,7 +60,6 @@ export function ProductForm() {
   const { data: brackets } = useBrackets(selectedSublayerItem)
   const { data: paymentOptions } = usePaymentOptions()
   const { data: branches } = useBranches()
-  const { data: sites } = useSites()
 
   const onSubmit = async (data: ProductFormValues) => {
     setIsSubmitting(true)
@@ -154,18 +152,6 @@ export function ProductForm() {
             >
               <option value="">Select Branch</option>
               {branches?.map((b: any) => <option key={b.identity} value={b.identity}>{b.name}</option>)}
-            </select>
-          </div>
-
-          {/* Site */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-700">Allocated Site (Optional)</label>
-            <select 
-              {...register("site")}
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none transition-all"
-            >
-              <option value="">Select Site</option>
-              {sites?.map((s: any) => <option key={s.identity} value={s.identity}>{s.name}</option>)}
             </select>
           </div>
         </div>

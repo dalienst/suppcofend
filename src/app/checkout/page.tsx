@@ -2,10 +2,10 @@
 
 import { useCartStore } from "@/lib/store"
 import { InstallmentProjector } from "@/components/payments/InstallmentProjector"
-import { 
-  ArrowLeft, 
-  ShieldCheck, 
-  CreditCard, 
+import {
+  ArrowLeft,
+  ShieldCheck,
+  CreditCard,
   Truck,
   Package,
   ChevronRight,
@@ -45,7 +45,7 @@ export default function CheckoutPage() {
         <p className="text-slate-500 mt-2 max-w-sm">
           Your orders have been dispatched to the respective suppliers. You can track status in your dashboard.
         </p>
-        <Link 
+        <Link
           href="/contractor/dashboard"
           className="mt-8 px-8 py-3 bg-jungle-700 text-white rounded-xl font-bold hover:bg-jungle-800 transition-all shadow-lg shadow-jungle-700/20"
         >
@@ -56,7 +56,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-8  mx-auto">
       <div className="flex items-center gap-4 mb-12">
         <button onClick={() => router.back()} className="p-2 hover:bg-white rounded-full border border-slate-100 text-slate-500">
           <ArrowLeft className="w-5 h-5" />
@@ -73,7 +73,7 @@ export default function CheckoutPage() {
                 <CreditCard className="w-5 h-5" />
                 <h2 className="text-lg font-bold">Flexible Payment Projection</h2>
               </div>
-              <InstallmentProjector 
+              <InstallmentProjector
                 totalAmount={flexibleItem.price * flexibleItem.quantity}
                 minDepositPercentage={20}
                 annualInterestRate={15}
@@ -126,7 +126,7 @@ export default function CheckoutPage() {
         <div className="space-y-8">
           <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 space-y-8">
             <h2 className="text-xl font-bold text-slate-900">Order Summary</h2>
-            
+
             <div className="space-y-4">
               <div className="flex justify-between text-slate-500">
                 <span>Subtotal ({items.length} items)</span>
@@ -164,7 +164,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            <button 
+            <button
               onClick={handlePlaceOrder}
               disabled={isProcessing}
               className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50"

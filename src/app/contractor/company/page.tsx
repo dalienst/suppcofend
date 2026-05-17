@@ -123,7 +123,7 @@ export default function ContractorCompanyPage() {
   }
 
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-8">
+    <div className="p-4 mx-auto space-y-8">
       <div>
         <h1 className="text-3xl font-black text-slate-900 tracking-tight">Business Profile</h1>
         <p className="text-slate-500 mt-1">Manage your contractor entity and compliance status.</p>

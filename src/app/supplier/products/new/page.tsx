@@ -4,7 +4,7 @@ import Link from "next/link"
 
 export default function NewProductPage() {
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-8">
+    <div className="p-4 container mx-auto space-y-8">
       <div className="flex items-center gap-4">
         <Link 
           href="/supplier/dashboard" 

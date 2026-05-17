@@ -81,7 +81,7 @@ export default function MarketplacePage() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto bg-slate-50 p-8">
-        <div className="max-w-6xl mx-auto space-y-8">
+        <div className="mx-auto space-y-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Industrial Marketplace</h1>

@@ -3,13 +3,13 @@
 import { useParams, useRouter } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
 import api from "@/lib/api"
-import { 
-  ArrowLeft, 
-  ShoppingBag, 
-  Truck, 
-  ShieldCheck, 
-  MapPin, 
-  Check, 
+import {
+  ArrowLeft,
+  ShoppingBag,
+  Truck,
+  ShieldCheck,
+  MapPin,
+  Check,
   Info,
   Calendar,
   CreditCard
@@ -36,9 +36,9 @@ export default function ProductDetailPage() {
 
   const handleAddToCart = () => {
     if (!product || !selectedPayment) return
-    
+
     const paymentOption = product.payment_options_details.find((opt: any) => opt.reference === selectedPayment)
-    
+
     addItem({
       reference: product.reference,
       product_name: product.product_name,
@@ -48,7 +48,7 @@ export default function ProductDetailPage() {
       paymentOptionReference: selectedPayment,
       paymentOptionName: paymentOption?.name || "Standard",
     })
-    
+
     router.push("/cart")
   }
 
@@ -61,7 +61,7 @@ export default function ProductDetailPage() {
   if (!product) return <div>Product not found</div>
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-12">
+    <div className="p-8  mx-auto space-y-12">
       {/* Breadcrumbs & Back */}
       <div className="flex items-center gap-4">
         <button onClick={() => router.back()} className="p-2 hover:bg-white rounded-full border border-slate-100 text-slate-500">
@@ -82,7 +82,7 @@ export default function ProductDetailPage() {
           <div className="aspect-square bg-white rounded-3xl border border-slate-200 flex items-center justify-center shadow-sm">
             <ShoppingBag className="w-32 h-32 text-slate-100" />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 bg-white rounded-2xl border border-slate-100 flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
@@ -147,8 +147,8 @@ export default function ProductDetailPage() {
                   onClick={() => setSelectedPayment(opt.reference)}
                   className={cn(
                     "w-full p-4 rounded-xl border-2 transition-all text-left flex items-center justify-between group",
-                    selectedPayment === opt.reference 
-                      ? "border-jungle-600 bg-jungle-50/50 shadow-sm" 
+                    selectedPayment === opt.reference
+                      ? "border-jungle-600 bg-jungle-50/50 shadow-sm"
                       : "border-slate-100 bg-white hover:border-slate-200"
                   )}
                 >
@@ -173,23 +173,23 @@ export default function ProductDetailPage() {
           {/* Quantity and Actions */}
           <div className="pt-6 border-t border-slate-100 flex items-center gap-4">
             <div className="flex items-center border border-slate-200 rounded-xl bg-white overflow-hidden h-14">
-              <button 
+              <button
                 onClick={() => setQuantity(q => Math.max(1, q - 1))}
                 className="w-12 h-full hover:bg-slate-50 flex items-center justify-center text-slate-500 transition-colors"
               >-</button>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 value={quantity}
                 onChange={(e) => setQuantity(Number(e.target.value))}
                 className="w-12 text-center font-bold text-slate-900 outline-none"
               />
-              <button 
+              <button
                 onClick={() => setQuantity(q => q + 1)}
                 className="w-12 h-full hover:bg-slate-50 flex items-center justify-center text-slate-500 transition-colors"
               >+</button>
             </div>
-            
-            <button 
+
+            <button
               disabled={!selectedPayment}
               onClick={handleAddToCart}
               className="flex-1 h-14 bg-jungle-700 hover:bg-jungle-800 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-jungle-700/20 disabled:opacity-50 disabled:bg-slate-400"
@@ -222,6 +222,6 @@ export default function ProductDetailPage() {
 
 function Tag({ className }: { className?: string }) {
   return (
-    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 5 4 4"/><path d="M13 7.5a1 1 0 0 0 1 1h.01a1 1 0 0 0 0-2H14a1 1 0 0 0-1 1Z"/><path d="M7.41 22 2 16.59V2h14.59L22 7.41V22Z"/></svg>
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 5 4 4" /><path d="M13 7.5a1 1 0 0 0 1 1h.01a1 1 0 0 0 0-2H14a1 1 0 0 0-1 1Z" /><path d="M7.41 22 2 16.59V2h14.59L22 7.41V22Z" /></svg>
   )
 }
