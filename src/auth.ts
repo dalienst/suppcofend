@@ -45,6 +45,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        token.id = user.id
         token.accessToken = (user as any).token
         token.is_contractor = (user as any).is_contractor
         token.is_supplier = (user as any).is_supplier
@@ -55,6 +56,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async session({ session, token }) {
       if (token) {
+        (session as any).user.id = token.id;
         (session as any).accessToken = token.accessToken;
         (session as any).user.is_contractor = token.is_contractor;
         (session as any).user.is_supplier = token.is_supplier;

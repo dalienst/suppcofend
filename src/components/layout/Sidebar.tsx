@@ -13,7 +13,11 @@ import {
   CreditCard,
   FileText,
   Warehouse,
-  ChevronRight
+  ChevronRight,
+  Building2,
+  Briefcase,
+  ShieldCheck,
+  PackageSearch
 } from "lucide-react"
 
 interface SidebarProps {
@@ -25,6 +29,7 @@ export function Sidebar({ role = "none" }: SidebarProps) {
   
   const contractorLinks = [
     { name: "Dashboard", href: "/contractor/dashboard", icon: LayoutDashboard },
+    { name: "Business Profile", href: "/contractor/company", icon: Building2 },
     { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
     { name: "My Orders", href: "/contractor/orders", icon: Truck },
     { name: "Payments", href: "/contractor/payments", icon: CreditCard },
@@ -33,10 +38,12 @@ export function Sidebar({ role = "none" }: SidebarProps) {
 
   const supplierLinks = [
     { name: "Overview", href: "/supplier/dashboard", icon: LayoutDashboard },
-    { name: "Products", href: "/supplier/products", icon: Package },
-    { name: "Fulfillment", href: "/supplier/fulfillment", icon: Truck },
-    { name: "Invoices", href: "/supplier/invoices", icon: FileText },
+    { name: "Business Profile", href: "/supplier/company", icon: Building2 },
     { name: "Branch Mgmt", href: "/supplier/branches", icon: Warehouse },
+    { name: "Payment Options", href: "/supplier/payment-options", icon: CreditCard },
+    { name: "Inventory", href: "/supplier/inventory", icon: PackageSearch },
+    { name: "Roles", href: "/supplier/roles", icon: ShieldCheck },
+    { name: "Products", href: "/supplier/products", icon: Package },
     { name: "Staff", href: "/supplier/staff", icon: Users },
   ]
 

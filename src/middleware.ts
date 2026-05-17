@@ -5,27 +5,33 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth
   const { nextUrl } = req
 
-  const isAuthRoute = nextUrl.pathname === "/login"
-  const isProtectedRoute = nextUrl.pathname.startsWith("/supplier") || nextUrl.pathname.startsWith("/contractor")
+  const isAuthRoute = ["/login", "/signup", "/password/reset", "/password/new"].includes(nextUrl.pathname) || nextUrl.pathname.startsWith("/signup/")
+  const isPublicRoute = ["/", "/marketplace", "/verify-email"].some(path => nextUrl.pathname.startsWith(path))
+  
+  const isSupplierRoute = nextUrl.pathname.startsWith("/supplier")
+  const isContractorRoute = nextUrl.pathname.startsWith("/contractor")
 
+  // 1. Redirect logged-in users away from auth routes
   if (isAuthRoute) {
     if (isLoggedIn) {
-      return NextResponse.redirect(new URL("/", nextUrl))
+      const isSupplier = (req.auth?.user as any)?.is_supplier
+      return NextResponse.redirect(new URL(isSupplier ? "/supplier/dashboard" : "/contractor/dashboard", nextUrl))
     }
     return NextResponse.next()
   }
 
-  if (isProtectedRoute && !isLoggedIn) {
-    return NextResponse.redirect(new URL("/login", nextUrl))
+  // 2. Protect Supplier routes
+  if (isSupplierRoute) {
+    if (!isLoggedIn) return NextResponse.redirect(new URL("/login", nextUrl))
+    if (!(req.auth?.user as any)?.is_supplier) return NextResponse.redirect(new URL("/", nextUrl))
+    return NextResponse.next()
   }
 
-  // Role-based protection
-  if (nextUrl.pathname.startsWith("/supplier") && req.auth?.user && !(req.auth.user as any).is_supplier) {
-    return NextResponse.redirect(new URL("/", nextUrl))
-  }
-
-  if (nextUrl.pathname.startsWith("/contractor") && req.auth?.user && !(req.auth.user as any).is_contractor) {
-    return NextResponse.redirect(new URL("/", nextUrl))
+  // 3. Protect Contractor routes
+  if (isContractorRoute) {
+    if (!isLoggedIn) return NextResponse.redirect(new URL("/login", nextUrl))
+    if (!(req.auth?.user as any)?.is_contractor) return NextResponse.redirect(new URL("/", nextUrl))
+    return NextResponse.next()
   }
 
   return NextResponse.next()

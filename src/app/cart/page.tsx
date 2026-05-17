@@ -1,11 +1,11 @@
 "use client"
 
 import { useCartStore } from "@/lib/store"
-import { 
-  ShoppingBag, 
-  Trash2, 
-  ArrowLeft, 
-  CreditCard, 
+import {
+  ShoppingBag,
+  Trash2,
+  ArrowLeft,
+  CreditCard,
   Truck,
   ChevronRight,
   Plus,
@@ -28,7 +28,7 @@ export default function CartPage() {
         <p className="text-slate-500 mt-2 text-center max-w-sm">
           You haven't added any industrial materials to your procurement list yet.
         </p>
-        <Link 
+        <Link
           href="/marketplace"
           className="mt-8 px-8 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all"
         >
@@ -39,7 +39,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-8  mx-auto">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-extrabold text-slate-900 flex items-center gap-3">
           Procurement Cart
@@ -47,7 +47,7 @@ export default function CartPage() {
             {items.length} Items
           </span>
         </h1>
-        <button 
+        <button
           onClick={() => clearCart()}
           className="text-sm font-bold text-red-500 hover:text-red-700 transition-colors"
         >
@@ -63,18 +63,18 @@ export default function CartPage() {
               <div className="w-24 h-24 bg-slate-50 rounded-xl flex-shrink-0 flex items-center justify-center">
                 <ShoppingBag className="w-10 h-10 text-slate-200" />
               </div>
-              
+
               <div className="flex-1 space-y-2">
                 <div className="flex justify-between">
                   <h3 className="font-bold text-slate-900 text-lg">{item.product_name}</h3>
-                  <button 
+                  <button
                     onClick={() => removeItem(item.reference, item.paymentOptionReference)}
                     className="p-2 text-slate-400 hover:text-red-500 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
-                
+
                 <div className="flex flex-wrap gap-4 text-xs font-medium text-slate-500">
                   <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 rounded-md">
                     <CreditCard className="w-3 h-3 text-suppblue-600" />
@@ -98,7 +98,7 @@ export default function CartPage() {
             </div>
           ))}
 
-          <Link 
+          <Link
             href="/marketplace"
             className="flex items-center gap-2 text-sm font-bold text-jungle-700 hover:gap-3 transition-all"
           >
@@ -111,7 +111,7 @@ export default function CartPage() {
         <div className="space-y-6">
           <div className="bg-slate-900 text-white p-8 rounded-3xl shadow-xl shadow-slate-900/20 sticky top-24">
             <h2 className="text-xl font-bold mb-6">Procurement Summary</h2>
-            
+
             <div className="space-y-4 mb-8">
               <div className="flex justify-between text-slate-400 text-sm">
                 <span>Subtotal</span>
@@ -128,7 +128,7 @@ export default function CartPage() {
               </div>
             </div>
 
-            <button 
+            <button
               onClick={() => router.push("/checkout")}
               className="w-full py-4 bg-jungle-500 hover:bg-jungle-400 text-slate-900 rounded-xl font-black flex items-center justify-center gap-2 transition-all"
             >
@@ -149,6 +149,6 @@ export default function CartPage() {
 
 function ShieldCheck({ className }: { className?: string }) {
   return (
-    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+    <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /><path d="m9 12 2 2 4-4" /></svg>
   )
 }
