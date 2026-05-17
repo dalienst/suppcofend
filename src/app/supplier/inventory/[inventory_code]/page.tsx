@@ -7,11 +7,11 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import api from "@/lib/api"
-import { 
-  PackageSearch, 
-  Loader2, 
-  Layers, 
-  ChevronRight, 
+import {
+  PackageSearch,
+  Loader2,
+  Layers,
+  ChevronRight,
   ChevronDown,
   Plus,
   Box,
@@ -120,7 +120,7 @@ const ProductsTable = ({ products, router }: { products: MiniProduct[], router: 
                 ${Number(product.price).toFixed(2)}
               </td>
               <td className="px-4 py-3 text-center">
-                <button 
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
                     router.push(`/supplier/products/${product.reference}`)
@@ -141,34 +141,35 @@ const ProductsTable = ({ products, router }: { products: MiniProduct[], router: 
 const BracketNode = ({ bracket, onAssignProduct, router }: { bracket: Bracket, onAssignProduct: (type: NodeType, parentRef: string) => void, router: any }) => {
   const [isOpen, setIsOpen] = useState(false)
   return (
-  <div className="pl-6 py-2 border-l-2 border-slate-100 ml-3">
-    <div className="flex items-center gap-2 group cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
-      {isOpen ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
-      <Square className="w-4 h-4 text-slate-400" />
-      <span className="text-sm font-medium text-slate-700">{bracket.name}</span>
-      <span className="text-xs text-slate-500 bg-slate-100 px-2 rounded-full">{bracket.products?.length || 0} products</span>
-      <span className="text-[10px] text-slate-400 font-mono bg-slate-50 px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-        {bracket.reference}
-      </span>
-      <button 
-        onClick={(e) => { e.stopPropagation(); onAssignProduct("bracket", bracket.reference) }}
-        className="ml-auto text-xs font-semibold text-suppblue-600 hover:text-suppblue-700 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1"
-      >
-        <Plus className="w-3 h-3" /> Add Product
-      </button>
-    </div>
-    {isOpen && (
-      <div className="mt-2 pl-6">
-        <ProductsTable products={bracket.products || []} router={router} />
+    <div className="pl-6 py-2 border-l-2 border-slate-100 ml-3">
+      <div className="flex items-center gap-2 group cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
+        {isOpen ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
+        <Square className="w-4 h-4 text-slate-400" />
+        <span className="text-sm font-medium text-slate-700">{bracket.name}</span>
+        <span className="text-xs text-slate-500 bg-slate-100 px-2 rounded-full">{bracket.products?.length || 0} products</span>
+        <span className="text-[10px] text-slate-400 font-mono bg-slate-50 px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+          {bracket.reference}
+        </span>
+        <button
+          onClick={(e) => { e.stopPropagation(); onAssignProduct("bracket", bracket.reference) }}
+          className="ml-auto text-xs font-semibold text-suppblue-600 hover:text-suppblue-700 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1"
+        >
+          <Plus className="w-3 h-3" /> Add Product
+        </button>
       </div>
-    )}
-  </div>
-)}
+      {isOpen && (
+        <div className="mt-2 pl-6">
+          <ProductsTable products={bracket.products || []} router={router} />
+        </div>
+      )}
+    </div>
+  )
+}
 
 const SublayerItemNode = ({ item, onAddChild, onAssignProduct, router }: { item: SubLayerItem, onAddChild: (type: NodeType, parentRef: string) => void, onAssignProduct: (type: NodeType, parentRef: string) => void, router: any }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [tab, setTab] = useState<"structure" | "products">("structure")
-  
+
   return (
     <div className="pl-6 border-l-2 border-slate-200 ml-3">
       <div className="py-2 flex items-center gap-2 group cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
@@ -177,21 +178,21 @@ const SublayerItemNode = ({ item, onAddChild, onAssignProduct, router }: { item:
         <span className="text-sm font-semibold text-slate-800">{item.name}</span>
         <span className="text-xs text-slate-500 bg-slate-100 px-2 rounded-full">{item.brackets?.length || 0} brackets</span>
         <span className="text-xs text-slate-500 bg-slate-100 px-2 rounded-full">{item.products?.length || 0} products</span>
-        
+
         <div className="ml-auto flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-      <button 
-        onClick={(e) => { e.stopPropagation(); onAddChild("bracket", item.reference) }}
-        className="text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-2 py-1 rounded shadow-sm"
-      >
-        + Add Bracket
-      </button>
-      <button 
-        onClick={(e) => { e.stopPropagation(); onAssignProduct("sublayeritem", item.reference) }}
-        className="text-xs font-semibold text-suppblue-600 hover:text-suppblue-700 flex items-center gap-1"
-      >
-        <Plus className="w-3 h-3" /> Add Product
-      </button>
-    </div>
+          <button
+            onClick={(e) => { e.stopPropagation(); onAddChild("bracket", item.reference) }}
+            className="text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-2 py-1 rounded shadow-sm"
+          >
+            + Add Bracket
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onAssignProduct("sublayeritem", item.reference) }}
+            className="text-xs font-semibold text-suppblue-600 hover:text-suppblue-700 flex items-center gap-1"
+          >
+            <Plus className="w-3 h-3" /> Add Product
+          </button>
+        </div>
       </div>
       {isOpen && (
         <div className="mt-1 border border-slate-100 rounded-xl bg-slate-50/30 overflow-hidden mb-3">
@@ -226,7 +227,7 @@ const SublayerItemNode = ({ item, onAddChild, onAssignProduct, router }: { item:
 const SublayerNode = ({ sublayer, onAddChild, onAssignProduct, router }: { sublayer: SubLayer, onAddChild: (type: NodeType, parentRef: string) => void, onAssignProduct: (type: NodeType, parentRef: string) => void, router: any }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [tab, setTab] = useState<"structure" | "products">("structure")
-  
+
   return (
     <div className="pl-6 border-l-2 border-slate-300 ml-3">
       <div className="py-3 flex items-center gap-2 group cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
@@ -235,21 +236,21 @@ const SublayerNode = ({ sublayer, onAddChild, onAssignProduct, router }: { subla
         <span className="text-sm font-semibold text-slate-900">{sublayer.name}</span>
         <span className="text-xs text-slate-500 bg-slate-100 px-2 rounded-full">{sublayer.sublayeritems?.length || 0} items</span>
         <span className="text-xs text-slate-500 bg-slate-100 px-2 rounded-full">{sublayer.products?.length || 0} products</span>
-        
+
         <div className="ml-auto flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-      <button 
-        onClick={(e) => { e.stopPropagation(); onAddChild("sublayeritem", sublayer.reference) }}
-        className="text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-2 py-1 rounded shadow-sm"
-      >
-        + Add Sublayer Item
-      </button>
-      <button 
-        onClick={(e) => { e.stopPropagation(); onAssignProduct("sublayer", sublayer.reference) }}
-        className="text-xs font-semibold text-suppblue-600 hover:text-suppblue-700 flex items-center gap-1"
-      >
-        <Plus className="w-3 h-3" /> Add Product
-      </button>
-    </div>
+          <button
+            onClick={(e) => { e.stopPropagation(); onAddChild("sublayeritem", sublayer.reference) }}
+            className="text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-2 py-1 rounded shadow-sm"
+          >
+            + Add Sublayer Item
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onAssignProduct("sublayer", sublayer.reference) }}
+            className="text-xs font-semibold text-suppblue-600 hover:text-suppblue-700 flex items-center gap-1"
+          >
+            <Plus className="w-3 h-3" /> Add Product
+          </button>
+        </div>
       </div>
       {isOpen && (
         <div className="mt-1 border border-slate-200 rounded-xl bg-slate-50/50 overflow-hidden mb-4 shadow-sm">
@@ -281,20 +282,20 @@ const SublayerNode = ({ sublayer, onAddChild, onAssignProduct, router }: { subla
   )
 }
 
-const LayerNode = ({ 
-  layer, 
-  onAddChild, 
+const LayerNode = ({
+  layer,
+  onAddChild,
   onAssignProduct,
   router
-}: { 
-  layer: Layer, 
-  onAddChild: (type: NodeType, parentRef: string) => void, 
+}: {
+  layer: Layer,
+  onAddChild: (type: NodeType, parentRef: string) => void,
   onAssignProduct: (type: NodeType, parentRef: string) => void,
   router: any
 }) => {
   const [isOpen, setIsOpen] = useState(true)
   const [tab, setTab] = useState<"structure" | "products">("structure")
-  
+
   return (
     <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
       {/* Layer Header */}
@@ -310,15 +311,15 @@ const LayerNode = ({
             <span className="text-xs font-medium text-slate-500 bg-slate-200/50 px-2 py-0.5 rounded-full">{layer.products?.length || 0} products</span>
           </div>
         </div>
-        
+
         <div className="ml-auto flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button 
+          <button
             onClick={(e) => { e.stopPropagation(); onAddChild("sublayer", layer.reference) }}
             className="text-sm font-semibold text-slate-700 hover:text-slate-900 bg-white border border-slate-200 px-4 py-2 rounded-xl shadow-sm transition-colors"
           >
             + Add Sublayer (Rack)
           </button>
-          <button 
+          <button
             onClick={(e) => { e.stopPropagation(); onAssignProduct("layer", layer.reference) }}
             className="text-sm font-bold text-white bg-suppblue-600 hover:bg-suppblue-700 px-4 py-2 rounded-xl flex items-center gap-1 transition-colors shadow-sm"
           >
@@ -326,7 +327,7 @@ const LayerNode = ({
           </button>
         </div>
       </div>
-      
+
       {/* Layer Content */}
       {isOpen && (
         <div className="bg-white">
@@ -338,7 +339,7 @@ const LayerNode = ({
               Products
             </button>
           </div>
-          
+
           <div className="p-5">
             {tab === "structure" ? (
               <div>
@@ -425,7 +426,7 @@ export default function InventoryExplorerPage() {
     mutationFn: async (data: NodeValues) => {
       let endpoint = ""
       let payload = {}
-      
+
       switch (modalState.type) {
         case "layer":
           endpoint = "/api/v1/layers/list-create/"
@@ -444,7 +445,7 @@ export default function InventoryExplorerPage() {
           payload = { name: data.name, sublayeritem: modalState.parentRef }
           break;
       }
-      
+
       return api.post(endpoint, payload)
     },
     onSuccess: () => {
@@ -456,7 +457,7 @@ export default function InventoryExplorerPage() {
   const assignProductMutation = useMutation({
     mutationFn: async () => {
       if (!selectedProductRef || !productModal.parentRef) return
-      
+
       const payload: Record<string, string | null> = {
         layer: null,
         sublayer: null,
@@ -464,7 +465,7 @@ export default function InventoryExplorerPage() {
         bracket: null
       }
       payload[productModal.type] = productModal.parentRef
-      
+
       return api.patch(`/api/v1/products/${selectedProductRef}/`, payload)
     },
     onSuccess: () => {
@@ -479,7 +480,7 @@ export default function InventoryExplorerPage() {
 
       const payload: any = { ...data }
       payload[productModal.type] = productModal.parentRef
-      
+
       return api.post(`/api/v1/products/`, payload)
     },
     onSuccess: () => {
@@ -538,7 +539,7 @@ export default function InventoryExplorerPage() {
     <div className="p-4 sm:p-8 mx-auto space-y-8 pb-20">
       {/* Header */}
       <div className="flex items-center gap-4 border-b border-slate-200 pb-6">
-        <button 
+        <button
           onClick={() => router.push("/supplier/inventory")}
           className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-500"
         >
@@ -569,9 +570,9 @@ export default function InventoryExplorerPage() {
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden p-6">
         <h2 className="font-semibold text-lg text-slate-900 mb-6 flex items-center gap-2">
           <Layers className="w-5 h-5 text-suppblue-600" />
-          Storage Structure
+          Inventory Structure
         </h2>
-        
+
         {(!inventory.layers || inventory.layers.length === 0) ? (
           <div className="text-center py-12 border-2 border-dashed border-slate-200 rounded-2xl">
             <p className="text-slate-500 mb-4">This inventory is currently empty.</p>
@@ -582,11 +583,11 @@ export default function InventoryExplorerPage() {
         ) : (
           <div className="space-y-4">
             {inventory.layers.map(layer => (
-              <LayerNode 
-                key={layer.reference} 
-                layer={layer} 
-                onAddChild={openModal} 
-                onAssignProduct={openProductModal} 
+              <LayerNode
+                key={layer.reference}
+                layer={layer}
+                onAddChild={openModal}
+                onAssignProduct={openProductModal}
                 router={router}
               />
             ))}
@@ -602,14 +603,14 @@ export default function InventoryExplorerPage() {
               <h2 className="font-semibold text-xl text-slate-900 capitalize">
                 Add {modalState.type}
               </h2>
-              <button 
+              <button
                 onClick={closeModal}
                 className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <form onSubmit={handleNodeSubmit(onSubmitNode)} className="p-6 space-y-5">
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-slate-700 ml-1 capitalize">{modalState.type} Name <span className="text-red-500">*</span></label>
@@ -654,35 +655,35 @@ export default function InventoryExplorerPage() {
               <h2 className="font-semibold text-xl text-slate-900">
                 Link Product to {productModal.type}
               </h2>
-              <button 
+              <button
                 onClick={closeProductModal}
                 className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="flex border-b border-slate-100">
-              <button 
+              <button
                 onClick={() => setProductModal({ ...productModal, tab: "link" })}
                 className={`flex-1 py-3 text-sm font-bold border-b-2 transition-colors ${productModal.tab === "link" ? "border-suppblue-600 text-suppblue-600" : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50"}`}
               >
                 Link Existing
               </button>
-              <button 
+              <button
                 onClick={() => setProductModal({ ...productModal, tab: "create" })}
                 className={`flex-1 py-3 text-sm font-bold border-b-2 transition-colors ${productModal.tab === "create" ? "border-suppblue-600 text-suppblue-600" : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50"}`}
               >
                 Quick Create
               </button>
             </div>
-            
+
             {productModal.tab === "link" ? (
               <div className="p-6 space-y-5">
                 <p className="text-sm text-slate-500 leading-relaxed">
                   Select an existing product from your catalog to assign it to this specific storage location. The product's previous location will be overwritten.
                 </p>
-                
+
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-slate-700 ml-1">Select Product</label>
                   <div className="relative">
