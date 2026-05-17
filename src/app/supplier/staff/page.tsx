@@ -50,6 +50,14 @@ interface EmploymentDetail {
   created_at: string
 }
 
+interface MiniBranchSiteDetail {
+  id: number
+  name: string
+  address: string | null
+  reference: string
+  identity: string
+}
+
 interface EmployeeUser {
   id: string
   email: string
@@ -62,6 +70,8 @@ interface EmployeeUser {
   location: string | null
   assigned_branch: string | null
   assigned_site: string | null
+  assigned_branch_details: MiniBranchSiteDetail | null
+  assigned_site_details: MiniBranchSiteDetail | null
   employment: EmploymentDetail[]
 }
 
@@ -367,7 +377,7 @@ export default function SupplierStaffPage() {
                               <div className="p-2 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-2 text-slate-800 text-xs font-bold shadow-sm">
                                 <Building2 className="w-4 h-4 text-suppblue-600 shrink-0" />
                                 <span className="max-w-[120px] truncate">
-                                  {branches.find(b => b.identity === employee.assigned_branch)?.name || employee.assigned_branch}
+                                  {employee.assigned_branch_details?.name || employee.assigned_branch}
                                 </span>
                               </div>
                               <button
