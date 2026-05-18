@@ -53,7 +53,7 @@ export default function NewPasswordPage() {
             <CheckCircle2 className="w-12 h-12" />
           </div>
           <div className="space-y-2">
-            <h1 className="text-3xl font-extrabold text-slate-900">Password Updated!</h1>
+            <h1 className="text-3xl font-bold text-slate-900">Password Updated!</h1>
             <p className="text-slate-500">
               Your password has been reset successfully. You can now sign in with your new credentials.
             </p>
@@ -77,7 +77,7 @@ export default function NewPasswordPage() {
             <Zap className="w-6 h-6 text-amber-500 fill-amber-500" />
             <span className="text-xl font-bold tracking-tight text-slate-900">SUPPCO</span>
           </div>
-          <h1 className="text-3xl font-extrabold text-slate-900">Create New Password</h1>
+          <h1 className="text-3xl font-bold text-slate-900">Create New Password</h1>
           <p className="text-slate-500 mt-2">Enter the 6-digit code sent to your email.</p>
         </div>
 

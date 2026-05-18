@@ -11,7 +11,7 @@ export default function Home() {
             <Zap className="w-3 h-3 text-amber-500 fill-amber-500" />
             Supply Chain Reimagined
           </div>
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 max-w-4xl mb-6">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 max-w-4xl mb-6">
             Industrial Procurement <br />
             <span className="text-slate-500">at the Speed of Thought</span>
           </h1>

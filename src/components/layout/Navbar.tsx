@@ -85,14 +85,14 @@ export function Navbar() {
         {session ? (
           <>
             {isContractor && mounted && (
-              <Link 
+              <Link
                 href="/cart"
                 className="p-2 hover:bg-slate-100 rounded-full text-slate-655 transition-colors relative"
                 title="Procurement Cart"
               >
                 <ShoppingCart className="w-5 h-5" />
                 {cartItemsCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-jungle-600 text-white text-[9px] font-black rounded-full flex items-center justify-center animate-in zoom-in-50 duration-150">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-jungle-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-in zoom-in-50 duration-150">
                     {cartItemsCount}
                   </span>
                 )}

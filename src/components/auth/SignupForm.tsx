@@ -65,7 +65,7 @@ export function SignupForm({ role }: SignupFormProps) {
         <div className={cn("w-20 h-20 mx-auto rounded-full flex items-center justify-center", `bg-${themeColor}-100 text-${themeColor}-600`)}>
           <BadgeCheck className="w-12 h-12" />
         </div>
-        <h2 className="text-3xl font-extrabold text-slate-900">Verify Your Email</h2>
+        <h2 className="text-3xl font-bold text-slate-900">Verify Your Email</h2>
         <p className="text-slate-500 max-w-sm mx-auto">
           We've sent a verification link to your email. Please check your inbox and click the link to activate your account.
         </p>

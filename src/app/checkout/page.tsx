@@ -176,7 +176,7 @@ export default function CheckoutPage() {
                         <Package className="w-5 h-5 text-slate-300" />
                       </div>
                       <div>
-                        <p className="text-xs font-extrabold text-slate-950">{item.product_name}</p>
+                        <p className="text-xs font-bold text-slate-950">{item.product_name}</p>
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">{item.paymentOptionName}</span>
                           <span className="text-[10px] text-slate-300">|</span>

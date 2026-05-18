@@ -74,11 +74,11 @@ export default function ContractorDashboard() {
   // Calculations based on dynamic data
   const totalSitesCount = sites?.length || 0
 
-  const activeOrders = orders?.filter(o => 
+  const activeOrders = orders?.filter(o =>
     !["DRAFT", "COMPLETED", "CANCELLED"].includes(o.status.toUpperCase())
   ) || []
 
-  const completedOrders = orders?.filter(o => 
+  const completedOrders = orders?.filter(o =>
     o.status.toUpperCase() === "COMPLETED"
   ) || []
 
@@ -137,7 +137,7 @@ export default function ContractorDashboard() {
 
   return (
     <div className="p-4 sm:p-8 space-y-10 pb-24 max-w-7xl mx-auto animate-in fade-in duration-300">
-      
+
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -160,9 +160,9 @@ export default function ContractorDashboard() {
 
       {/* Overview Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
+
         {/* Card 1: Active Shipments */}
-        <div 
+        <div
           onClick={() => router.push("/contractor/orders")}
           className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between"
         >
@@ -175,7 +175,7 @@ export default function ContractorDashboard() {
             </div>
             <div>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Orders</p>
-              <h2 className="text-3xl font-black text-slate-900 mt-1">{activeOrders.length}</h2>
+              <h2 className="text-3xl font-bold text-slate-900 mt-1">{activeOrders.length}</h2>
             </div>
           </div>
           <div className="mt-6 pt-4 border-t border-slate-50 text-xs font-semibold text-jungle-600 flex items-center gap-1">
@@ -184,7 +184,7 @@ export default function ContractorDashboard() {
         </div>
 
         {/* Card 2: Outstanding Balance */}
-        <div 
+        <div
           onClick={() => router.push("/contractor/payments")}
           className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between"
         >
@@ -197,7 +197,7 @@ export default function ContractorDashboard() {
             </div>
             <div>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Outstanding</p>
-              <h2 className="text-3xl font-black text-slate-900 mt-1 font-mono">
+              <h2 className="text-3xl font-bold text-slate-900 mt-1 font-mono">
                 KES {totalOutstanding.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </h2>
             </div>
@@ -208,7 +208,7 @@ export default function ContractorDashboard() {
         </div>
 
         {/* Card 3: Active Sites */}
-        <div 
+        <div
           onClick={() => router.push("/contractor/sites")}
           className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between"
         >
@@ -221,7 +221,7 @@ export default function ContractorDashboard() {
             </div>
             <div>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Project Footprints</p>
-              <h2 className="text-3xl font-black text-slate-900 mt-1">{totalSitesCount}</h2>
+              <h2 className="text-3xl font-bold text-slate-900 mt-1">{totalSitesCount}</h2>
             </div>
           </div>
           <div className="mt-6 pt-4 border-t border-slate-50 text-xs font-semibold text-suppblue-600 flex items-center gap-1">
@@ -233,13 +233,13 @@ export default function ContractorDashboard() {
 
       {/* Shipments & Ledger Split Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        
+
         {/* Track Active Shipments */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-slate-900 tracking-tight">Active Shipments</h2>
-            <Link 
-              href="/contractor/orders" 
+            <Link
+              href="/contractor/orders"
               className="text-xs font-bold text-jungle-750 hover:text-jungle-850 flex items-center gap-1 hover:underline"
             >
               All Orders <ChevronRight className="w-3.5 h-3.5" />
@@ -263,15 +263,15 @@ export default function ContractorDashboard() {
             ) : (
               activeOrders.slice(0, 4).map((order) => {
                 const firstItem = order.items?.[0]
-                const itemName = firstItem 
+                const itemName = firstItem
                   ? `${firstItem.product_name} (${Number(firstItem.quantity)} Units)`
                   : "Materials Order"
                 const supplierName = firstItem?.product_company || "Direct Supplier"
                 const itemTotalCount = order.items?.length || 1
 
                 return (
-                  <div 
-                    key={order.reference} 
+                  <div
+                    key={order.reference}
                     onClick={() => router.push(`/contractor/orders`)}
                     className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-jungle-550 transition-all flex items-center justify-between group cursor-pointer"
                   >
@@ -306,8 +306,8 @@ export default function ContractorDashboard() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-slate-900 tracking-tight">Active Payments</h2>
-            <Link 
-              href="/contractor/payments" 
+            <Link
+              href="/contractor/payments"
               className="text-xs font-bold text-jungle-750 hover:text-jungle-850 flex items-center gap-1 hover:underline"
             >
               Reconciliation <ChevronRight className="w-3.5 h-3.5" />
@@ -316,7 +316,7 @@ export default function ContractorDashboard() {
 
           <div className="bg-slate-900 rounded-3xl p-6 text-white overflow-hidden relative min-h-[220px] flex flex-col justify-between">
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
-            
+
             {!outstandingOrders || outstandingOrders.length === 0 ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center space-y-3 relative z-10 py-6">
                 <div className="w-12 h-12 rounded-full bg-white/5 text-white/50 flex items-center justify-center">
@@ -334,13 +334,13 @@ export default function ContractorDashboard() {
                   const outstanding = totalVal - paidVal
 
                   return (
-                    <div 
-                      key={pmt.reference} 
+                    <div
+                      key={pmt.reference}
                       onClick={() => router.push("/contractor/payments")}
                       className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 transition-all border border-white/5 rounded-2xl group cursor-pointer"
                     >
                       <div className="flex items-center gap-4 min-w-0">
-                        <div className="w-10 h-10 bg-jungle-400 text-slate-950 rounded-xl flex items-center justify-center font-black text-xs shrink-0 font-mono">
+                        <div className="w-10 h-10 bg-jungle-400 text-slate-950 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 font-mono">
                           KES
                         </div>
                         <div className="min-w-0">

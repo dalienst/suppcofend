@@ -13,6 +13,8 @@ export interface CartItem {
   deposit_amount?: number
   duration_months?: number
   monthly_amount?: number
+  company_reference?: string
+  company_name?: string
 }
 
 interface CartStore {
@@ -30,6 +32,20 @@ export const useCartStore = create<CartStore>()(
       items: [],
       addItem: (newItem: CartItem) => {
         const currentItems = get().items
+        
+        // Enforce single supplier constraint on frontend
+        if (currentItems.length > 0) {
+          const firstItem = currentItems[0]
+          if (
+            firstItem.company_reference && 
+            newItem.company_reference && 
+            firstItem.company_reference !== newItem.company_reference
+          ) {
+            const errorMsg = `Your cart already contains items from "${firstItem.company_name}". You can only purchase from one supplier at a time in a single checkout order.`
+            throw new Error(errorMsg)
+          }
+        }
+
         const existingItemIndex = currentItems.findIndex(
           (item: CartItem) => item.reference === newItem.reference && item.paymentOptionReference === newItem.paymentOptionReference
         )

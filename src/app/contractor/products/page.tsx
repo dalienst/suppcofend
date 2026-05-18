@@ -122,7 +122,7 @@ export default function ContractorProductsPage() {
                     <p className="text-[10px] text-slate-500">{product.unit}</p>
                   </td>
                   <td className="px-6 py-4">
-                    <p className="font-extrabold text-slate-900">{Number(product.price).toLocaleString()}</p>
+                    <p className="font-bold text-slate-900">{Number(product.price).toLocaleString()}</p>
                   </td>
                   <td className="px-6 py-4">
                     <span className="inline-flex items-center px-2 py-1 rounded-md bg-emerald-50 text-emerald-700 text-[10px] font-semibold uppercase tracking-wider">

@@ -453,7 +453,7 @@ export default function SupplierStaffPage() {
                         {/* Role Details */}
                         <td className="px-6 py-4">
                           <div className="space-y-1.5">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-extrabold bg-suppblue-50 text-suppblue-700">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-suppblue-50 text-suppblue-700">
                               <ShieldCheck className="w-3.5 h-3.5" />
                               {matchedRole?.name || employeeRoleIdentity || "Employee"}
                             </span>
@@ -517,7 +517,7 @@ export default function SupplierStaffPage() {
                           ) : (
                             <button
                               onClick={() => setAssigningEmployee(employee)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-extrabold text-slate-600 bg-slate-100 hover:bg-suppblue-50 hover:text-suppblue-700 hover:border-suppblue-100 border border-transparent rounded-xl transition-all"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-suppblue-50 hover:text-suppblue-700 hover:border-suppblue-100 border border-transparent rounded-xl transition-all"
                             >
                               <Link className="w-3.5 h-3.5" />
                               Assign Branch

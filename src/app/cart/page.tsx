@@ -37,7 +37,7 @@ export default function CartPage() {
         <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6 animate-pulse">
           <ShoppingBag className="w-10 h-10 text-slate-300" />
         </div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Your cart is empty</h1>
+        <h1 className="text-lg font-semibold text-slate-900 tracking-tight">Your cart is empty</h1>
         <p className="text-slate-500 mt-2 text-center max-w-sm text-sm">
           You haven't added any industrial materials to your procurement list yet.
         </p>
@@ -55,7 +55,7 @@ export default function CartPage() {
     <div className="p-8 mx-auto max-w-7xl pb-24 space-y-8">
       <div className="flex items-center justify-between border-b border-slate-100 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
+          <h1 className="text-xl font-semibold text-slate-900 tracking-tight flex items-center gap-3">
             Procurement Cart
             <span className="text-xs font-semibold bg-slate-100 text-slate-500 px-2.5 py-1 rounded-xl">
               {items.length} {items.length === 1 ? "Item" : "Items"}
@@ -65,7 +65,7 @@ export default function CartPage() {
         </div>
         <button
           onClick={() => clearCart()}
-          className="text-xs font-extrabold text-red-500 hover:text-red-700 transition-colors uppercase tracking-wider"
+          className="text-xs font-semibold text-red-500 hover:text-red-700 transition-colors uppercase tracking-wider"
         >
           Clear All Items
         </button>
@@ -95,7 +95,7 @@ export default function CartPage() {
                 <div className="flex-1 space-y-4">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-extrabold text-slate-900 text-lg leading-snug">{item.product_name}</h3>
+                      <h3 className="font-semibold text-slate-900 text-lg leading-snug">{item.product_name}</h3>
                       <p className="text-xs text-slate-400 font-medium font-mono mt-0.5">REF: {item.reference.substring(0, 8).toUpperCase()}</p>
                     </div>
                     <button
@@ -126,19 +126,19 @@ export default function CartPage() {
                     <div className="p-4 bg-jungle-50/30 border border-jungle-100/50 rounded-2xl grid grid-cols-3 gap-2 text-left">
                       <div>
                         <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Required Down Payment</p>
-                        <p className="text-xs font-mono font-bold text-slate-900 mt-0.5">
+                        <p className="text-xs font-mono font-semibold text-slate-900 mt-0.5">
                           KES {item.deposit_amount?.toLocaleString()}
                         </p>
                       </div>
                       <div>
                         <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Plan Duration</p>
-                        <p className="text-xs font-bold text-slate-900 mt-0.5">
+                        <p className="text-xs font-semibold text-slate-900 mt-0.5">
                           {item.duration_months} Months
                         </p>
                       </div>
                       <div>
                         <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Monthly Cost</p>
-                        <p className="text-xs font-mono font-bold text-jungle-750 mt-0.5">
+                        <p className="text-xs font-mono font-semibold text-jungle-750 mt-0.5">
                           KES {item.monthly_amount ? Math.ceil(item.monthly_amount).toLocaleString() : 0} / mo
                         </p>
                       </div>
@@ -146,10 +146,10 @@ export default function CartPage() {
                   )}
 
                   <div className="flex items-center justify-between pt-2">
-                    <p className="font-extrabold text-slate-950 text-base">
+                    <p className="font-semibold text-slate-950 text-base">
                       KES {item.price.toLocaleString()} <span className="text-slate-400 font-normal text-xs">/ {item.unit}</span>
                     </p>
-                    <span className="text-xs font-extrabold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+                    <span className="text-xs font-semibold text-slate-700 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
                       Quantity: <strong className="text-slate-900">{item.quantity} {item.unit}</strong>
                     </span>
                   </div>
@@ -160,7 +160,7 @@ export default function CartPage() {
 
           <Link
             href="/marketplace"
-            className="inline-flex items-center gap-2 text-xs font-bold text-jungle-750 hover:gap-3 transition-all uppercase tracking-wider"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-jungle-750 hover:gap-3 transition-all uppercase tracking-wider"
           >
             <ArrowLeft className="w-4 h-4" />
             Continue Sourcing Materials
@@ -193,13 +193,13 @@ export default function CartPage() {
               <div className="h-px bg-white/10 my-4" />
               <div className="flex justify-between">
                 <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest mt-1">Total Book Value</span>
-                <span className="text-2xl font-bold text-white font-mono">KES {totalPrice().toLocaleString()}</span>
+                <span className="text-lg font-semibold text-white font-mono">KES {totalPrice().toLocaleString()}</span>
               </div>
             </div>
 
             {/* Split Checkout Notice */}
             <div className="p-4 bg-white/5 border border-white/10 rounded-2xl mb-6 space-y-2 text-xs text-slate-350">
-              <p className="font-extrabold text-white flex items-center gap-1.5">
+              <p className="font-semibold text-white flex items-center gap-1.5">
                 <Building2 className="w-4 h-4 text-jungle-500" />
                 Automatic Multi-Supplier Split
               </p>
@@ -210,7 +210,7 @@ export default function CartPage() {
 
             <button
               onClick={() => router.push("/checkout")}
-              className="w-full py-4 bg-jungle-500 hover:bg-jungle-400 text-slate-950 rounded-xl font-extrabold flex items-center justify-center gap-2 transition-all text-xs uppercase tracking-wider shadow-lg shadow-jungle-500/10"
+              className="w-full py-4 bg-jungle-500 hover:bg-jungle-400 text-slate-950 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all text-xs uppercase tracking-wider shadow-lg shadow-jungle-500/10"
             >
               Secure Procurement Checkout
               <ChevronRight className="w-4 h-4" />

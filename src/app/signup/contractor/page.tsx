@@ -14,7 +14,7 @@ export default function ContractorSignupPage() {
               <Truck className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight">Contractor Account</h1>
+              <h1 className="text-2xl font-bold tracking-tight">Contractor Account</h1>
               <p className="text-jungle-100 text-sm mt-2 leading-relaxed">
                 Streamline your procurement. Source materials, track deliveries, and manage flexible payments across all your project sites.
               </p>

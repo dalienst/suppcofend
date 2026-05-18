@@ -21,6 +21,7 @@ import { useState } from "react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useSession } from "next-auth/react"
+import toast from "react-hot-toast"
 
 export default function ProductDetailPage() {
   const params = useParams()
@@ -70,20 +71,27 @@ export default function ProductDetailPage() {
     const durationToSave = isFlexible ? customDuration : undefined
     const monthlyToSave = isFlexible ? monthlyInstallment : undefined
 
-    addItem({
-      reference: product.reference,
-      product_name: product.product_name,
-      price: Number(product.price),
-      quantity: quantity,
-      unit: product.unit,
-      paymentOptionReference: selectedPayment,
-      paymentOptionName: activeOption?.name || "Standard",
-      deposit_amount: depositToSave,
-      duration_months: durationToSave,
-      monthly_amount: monthlyToSave
-    })
+    try {
+      addItem({
+        reference: product.reference,
+        product_name: product.product_name,
+        price: Number(product.price),
+        quantity: quantity,
+        unit: product.unit,
+        paymentOptionReference: selectedPayment,
+        paymentOptionName: activeOption?.name || "Standard",
+        deposit_amount: depositToSave,
+        duration_months: durationToSave,
+        monthly_amount: monthlyToSave,
+        company_reference: product.company_reference,
+        company_name: product.company_name
+      })
 
-    router.push("/cart")
+      toast.success("Added to procurement cart!")
+      router.push("/cart")
+    } catch (error: any) {
+      toast.error(error.message || "Failed to add to cart.")
+    }
   }
 
   if (isLoading) return (
@@ -116,7 +124,7 @@ export default function ProductDetailPage() {
           <div className="aspect-square bg-white rounded-3xl border border-slate-200 flex items-center justify-center shadow-sm relative">
             <ShoppingBag className="w-32 h-32 text-slate-100" />
             <div className="absolute top-6 left-6">
-              <span className="px-3 py-1.5 rounded-full bg-slate-950 text-white font-extrabold text-[10px] tracking-widest uppercase">
+              <span className="px-3 py-1.5 rounded-full bg-slate-950 text-white font-bold text-[10px] tracking-widest uppercase">
                 {product.layer}
               </span>
             </div>
@@ -147,11 +155,11 @@ export default function ProductDetailPage() {
         {/* Info & Options Section */}
         <div className="space-y-10">
           <div>
-            <div className="inline-flex items-center gap-2 px-2 py-1 rounded bg-jungle-50 text-jungle-750 text-[10px] font-extrabold uppercase tracking-wider mb-4">
+            <div className="inline-flex items-center gap-2 px-2 py-1 rounded bg-jungle-50 text-jungle-750 text-[10px] font-bold uppercase tracking-wider mb-4">
               <span className="w-1.5 h-1.5 bg-jungle-600 rounded-full animate-pulse" />
               In Stock & Ready
             </div>
-            <h1 className="text-4xl font-extrabold text-slate-900 leading-tight tracking-tight">{product.product_name}</h1>
+            <h1 className="text-4xl font-bold text-slate-900 leading-tight tracking-tight">{product.product_name}</h1>
             <div className="flex items-center gap-4 mt-4">
               <div className="flex items-center gap-1 text-slate-500">
                 <MapPin className="w-4 h-4" />
@@ -268,7 +276,7 @@ export default function ProductDetailPage() {
                 <div className="h-px bg-slate-100 my-1" />
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-slate-900">Estimated Monthly Installment:</span>
-                  <span className="text-sm font-extrabold text-jungle-700 font-mono">
+                  <span className="text-sm font-bold text-jungle-700 font-mono">
                     KES {Math.ceil(monthlyInstallment).toLocaleString()} / mo
                   </span>
                 </div>
@@ -287,7 +295,7 @@ export default function ProductDetailPage() {
                 </p>
                 <Link
                   href="/login"
-                  className="inline-block mt-3 text-xs font-extrabold text-amber-700 hover:text-amber-800 underline uppercase tracking-wider"
+                  className="inline-block mt-3 text-xs font-bold text-amber-700 hover:text-amber-800 underline uppercase tracking-wider"
                 >
                   Log In &rarr;
                 </Link>

@@ -14,7 +14,7 @@ export default function SupplierSignupPage() {
               <ShoppingBag className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight">Supplier Account</h1>
+              <h1 className="text-2xl font-bold tracking-tight">Supplier Account</h1>
               <p className="text-suppblue-100 text-sm mt-2 leading-relaxed">
                 Start selling your industrial equipment and materials to a vast network of verified contractors.
               </p>

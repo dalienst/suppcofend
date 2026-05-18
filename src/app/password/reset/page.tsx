@@ -44,7 +44,7 @@ export default function RequestResetPage() {
             <CheckCircle2 className="w-12 h-12" />
           </div>
           <div className="space-y-2">
-            <h1 className="text-3xl font-extrabold text-slate-900">Check Your Email</h1>
+            <h1 className="text-3xl font-bold text-slate-900">Check Your Email</h1>
             <p className="text-slate-500">
               We've sent a 6-digit verification code to your email. Use it to reset your password.
             </p>
@@ -68,7 +68,7 @@ export default function RequestResetPage() {
             <Zap className="w-6 h-6 text-amber-500 fill-amber-500" />
             <span className="text-xl font-bold tracking-tight text-slate-900">SUPPCO</span>
           </div>
-          <h1 className="text-3xl font-extrabold text-slate-900">Reset Password</h1>
+          <h1 className="text-3xl font-bold text-slate-900">Reset Password</h1>
           <p className="text-slate-500 mt-2">Enter your email to receive a reset code.</p>
         </div>
 

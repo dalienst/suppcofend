@@ -88,9 +88,9 @@ export default function DeliveryZonesPage() {
       closeModal()
     },
     onError: (err: any) => {
-      const msg = err?.response?.data?.non_field_errors?.[0] || 
-                  err?.response?.data?.city?.[0] || 
-                  "Failed to create delivery zone."
+      const msg = err?.response?.data?.non_field_errors?.[0] ||
+        err?.response?.data?.city?.[0] ||
+        "Failed to create delivery zone."
       setErrorMessage(msg)
       toast.error(msg)
     }
@@ -106,9 +106,9 @@ export default function DeliveryZonesPage() {
       closeModal()
     },
     onError: (err: any) => {
-      const msg = err?.response?.data?.non_field_errors?.[0] || 
-                  err?.response?.data?.city?.[0] || 
-                  "Failed to update delivery zone."
+      const msg = err?.response?.data?.non_field_errors?.[0] ||
+        err?.response?.data?.city?.[0] ||
+        "Failed to update delivery zone."
       setErrorMessage(msg)
       toast.error(msg)
     }
@@ -244,11 +244,10 @@ export default function DeliveryZonesPage() {
                     <div>
                       <h3 className="font-bold text-slate-900 leading-snug">{zone.city}</h3>
                       <span
-                        className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md mt-1 border uppercase tracking-wider ${
-                          zone.is_active
+                        className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md mt-1 border uppercase tracking-wider ${zone.is_active
                             ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                             : "bg-slate-50 text-slate-500 border-slate-200"
-                        }`}
+                          }`}
                       >
                         {zone.is_active ? "Active" : "Disabled"}
                       </span>
@@ -287,7 +286,7 @@ export default function DeliveryZonesPage() {
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
                       <Coins className="w-3.5 h-3.5 text-slate-400" /> Shipping Fee
                     </span>
-                    <p className="text-base font-black text-slate-900 font-mono">
+                    <p className="text-base font-bold text-slate-900 font-mono">
                       KES {Number(zone.fee).toLocaleString()}
                     </p>
                   </div>

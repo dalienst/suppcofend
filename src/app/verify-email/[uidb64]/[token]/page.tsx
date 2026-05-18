@@ -54,7 +54,7 @@ export default function VerifyEmailPage() {
               <BadgeCheck className="w-12 h-12" />
             </div>
             <div className="space-y-2">
-              <h1 className="text-3xl font-extrabold text-slate-900">Email Verified!</h1>
+              <h1 className="text-3xl font-bold text-slate-900">Email Verified!</h1>
               <p className="text-slate-500">
                 Your account is now active. You can sign in to access the marketplace.
               </p>
@@ -74,7 +74,7 @@ export default function VerifyEmailPage() {
               <XCircle className="w-12 h-12" />
             </div>
             <div className="space-y-2">
-              <h1 className="text-3xl font-extrabold text-slate-900">Verification Failed</h1>
+              <h1 className="text-3xl font-bold text-slate-900">Verification Failed</h1>
               <p className="text-slate-500">{message}</p>
             </div>
             <div className="pt-4 border-t border-slate-100">

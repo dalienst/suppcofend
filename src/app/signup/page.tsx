@@ -23,7 +23,7 @@ export default function SignupSelectionPage() {
             </div>
 
             <div>
-              <h2 className="text-3xl font-extrabold text-slate-900">For Contractors</h2>
+              <h2 className="text-3xl font-bold text-slate-900">For Contractors</h2>
               <p className="text-slate-500 mt-2 text-lg">
                 Access industrial materials, track deliveries, and manage project procurement in one place.
               </p>
@@ -59,7 +59,7 @@ export default function SignupSelectionPage() {
             </div>
 
             <div>
-              <h2 className="text-3xl font-extrabold text-slate-900">For Suppliers</h2>
+              <h2 className="text-3xl font-bold text-slate-900">For Suppliers</h2>
               <p className="text-slate-500 mt-2 text-lg">
                 List your products, manage fulfillment across branches, and reach more industrial buyers.
               </p>
