@@ -104,7 +104,14 @@ export default function ContractorCompanyPage() {
   })
 
   const onSubmit = (data: CompanyValues) => {
-    mutation.mutate(data)
+    const payload: any = { ...data }
+    if (payload.email === "") payload.email = null
+    if (payload.phone === "") payload.phone = null
+    if (payload.registration_number === "") payload.registration_number = null
+    if (payload.kra_pin === "") payload.kra_pin = null
+    if (payload.vat_number === "") payload.vat_number = null
+
+    mutation.mutate(payload)
   }
 
   if (isLoading || !companyData) {
