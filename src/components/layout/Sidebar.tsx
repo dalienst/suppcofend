@@ -45,6 +45,7 @@ export function Sidebar({ role = "none" }: SidebarProps) {
     { name: "Business Profile", href: "/supplier/company", icon: Building2 },
     { name: "Branch Mgmt", href: "/supplier/branches", icon: Warehouse },
     { name: "Payment Options", href: "/supplier/payment-options", icon: CreditCard },
+    { name: "Shipping Zones", href: "/supplier/delivery-zones", icon: Truck },
     { name: "Inventory", href: "/supplier/inventory", icon: PackageSearch },
     { name: "Roles", href: "/supplier/roles", icon: ShieldCheck },
     { name: "Products", href: "/supplier/products", icon: Package },

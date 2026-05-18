@@ -6,13 +6,23 @@ import { cn } from "@/lib/utils"
 import {
   User as UserIcon,
   Bell,
-  LogOut
+  LogOut,
+  ShoppingCart
 } from "lucide-react"
 import { signOut, useSession } from "next-auth/react"
+import { useCartStore } from "@/lib/store"
+import { useEffect, useState } from "react"
 
 export function Navbar() {
   const pathname = usePathname()
   const { data: session } = useSession()
+
+  const [mounted, setMounted] = useState(false)
+  const cartItemsCount = useCartStore((state: any) => state.items.length)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Logic to determine role based on path for styling
   const isContractor = (session?.user as any)?.is_contractor
@@ -74,6 +84,20 @@ export function Navbar() {
       <div className="flex items-center gap-4">
         {session ? (
           <>
+            {isContractor && mounted && (
+              <Link 
+                href="/cart"
+                className="p-2 hover:bg-slate-100 rounded-full text-slate-655 transition-colors relative"
+                title="Procurement Cart"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                {cartItemsCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-jungle-600 text-white text-[9px] font-black rounded-full flex items-center justify-center animate-in zoom-in-50 duration-150">
+                    {cartItemsCount}
+                  </span>
+                )}
+              </Link>
+            )}
             <button className="p-2 hover:bg-slate-100 rounded-full text-slate-600 transition-colors relative">
               <Bell className="w-5 h-5" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />

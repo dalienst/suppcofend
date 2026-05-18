@@ -278,8 +278,8 @@ export default function ContractorSiteDetailPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
-                    {site.assigned_staff.map((staff) => (
-                      <tr key={staff.reference} className="hover:bg-slate-50/50 transition-colors">
+                    {site.assigned_staff.map((staff, index) => (
+                      <tr key={staff.id || staff.reference || `staff-${index}`} className="hover:bg-slate-50/50 transition-colors">
                         <td className="px-6 py-4 font-semibold text-slate-900">
                           {staff.first_name} {staff.last_name}
                         </td>
@@ -356,8 +356,8 @@ export default function ContractorSiteDetailPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
-                    {site.site_products.map((product) => (
-                      <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
+                    {site.site_products.map((product, index) => (
+                      <tr key={product.id || product.reference || `prod-${index}`} className="hover:bg-slate-50/50 transition-colors">
                         <td className="px-6 py-4 font-semibold text-slate-900">
                           {product.name}
                         </td>
