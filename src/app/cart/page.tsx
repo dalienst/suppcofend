@@ -16,10 +16,16 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
 
 export default function CartPage() {
   const { items, removeItem, totalPrice, clearCart } = useCartStore()
   const router = useRouter()
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Calculate sum of initial required down payments (escrows)
   const calculateTotalDownPayment = () => {
@@ -37,6 +43,14 @@ export default function CartPage() {
       // FIXED or standard fallback is 100% full subtotal
       return acc + itemTotal
     }, 0)
+  }
+
+  if (!isMounted) {
+    return (
+      <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-slate-900 border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
   }
 
   if (items.length === 0) {

@@ -14,7 +14,7 @@ import {
   AlertCircle
 } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
 import api from "@/lib/api"
@@ -25,6 +25,11 @@ export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [createdOrders, setCreatedOrders] = useState<any[] | null>(null)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Fetch operational contractor sites from the database
   const { data: sites } = useQuery({
@@ -37,6 +42,22 @@ export default function CheckoutPage() {
 
   const [selectedSite, setSelectedSite] = useState<string>("")
   const [deliveryAddress, setDeliveryAddress] = useState<string>("")
+  const [selectedZoneRef, setSelectedZoneRef] = useState<string>("")
+
+  // Fetch delivery zones for the active supplier company
+  const supplierRef = items[0]?.company_reference
+  const { data: zones } = useQuery({
+    queryKey: ["delivery-zones", supplierRef],
+    queryFn: async () => {
+      if (!supplierRef) return []
+      const response = await api.get(`/api/v1/delivery/zones/?company=${supplierRef}`)
+      return response.data.results || response.data
+    },
+    enabled: !!supplierRef
+  })
+
+  const selectedZone = zones?.find((z: any) => z.reference === selectedZoneRef)
+  const logisticsFee = selectedZone ? Number(selectedZone.fee) : 0
 
   // Calculate sum of initial required down payments (escrows)
   const calculateTotalDownPayment = () => {
@@ -57,6 +78,14 @@ export default function CheckoutPage() {
 
   // Check if any cart item has a flexible plan
   const flexibleItem = items.find((item: CartItem) => item.deposit_amount !== undefined)
+
+  if (!isMounted) {
+    return (
+      <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-slate-900 border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
 
   const handlePlaceOrder = async () => {
     setIsProcessing(true)
@@ -85,7 +114,10 @@ export default function CheckoutPage() {
       }
 
       // 2. Dispatch checkout call to split orders per supplier
-      const checkoutRes = await api.post("/api/v1/orders/checkout/")
+      const checkoutRes = await api.post("/api/v1/orders/checkout/", {
+        delivery_address: deliveryAddress,
+        delivery_zone: selectedZoneRef || null
+      })
       const orderRefs = checkoutRes.data.map((ord: any) => ord.reference)
 
       // 3. Initialize Paystack downpayment transaction
@@ -244,17 +276,32 @@ export default function CheckoutPage() {
               <Truck className="w-5 h-5 text-slate-700" />
               Delivery Allocation
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Assign to Project Site</label>
                 <select
                   value={selectedSite}
                   onChange={(e) => setSelectedSite(e.target.value)}
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold outline-none cursor-pointer"
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold outline-none cursor-pointer text-slate-900"
                 >
                   <option value="">Select Target Site...</option>
                   {sites?.map((site: any) => (
                     <option key={site.reference} value={site.name}>{site.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Target Hub / Zone</label>
+                <select
+                  value={selectedZoneRef}
+                  onChange={(e) => setSelectedZoneRef(e.target.value)}
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold outline-none cursor-pointer text-slate-900"
+                >
+                  <option value="">Self-Pickup (KES 0)</option>
+                  {zones?.map((zone: any) => (
+                    <option key={zone.reference} value={zone.reference}>
+                      {zone.city} (KES {Number(zone.fee).toLocaleString()})
+                    </option>
                   ))}
                 </select>
               </div>
@@ -265,7 +312,7 @@ export default function CheckoutPage() {
                   placeholder="Street name, plot number, region..."
                   value={deliveryAddress}
                   onChange={(e) => setDeliveryAddress(e.target.value)}
-                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold outline-none"
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold outline-none text-slate-950"
                 />
               </div>
             </div>
@@ -287,11 +334,11 @@ export default function CheckoutPage() {
             </div>
             <div className="flex justify-between text-slate-500 text-xs">
               <span>Future Financed Ledger</span>
-              <span className="font-semibold text-slate-600 font-mono">KES {(totalPrice() - calculateTotalDownPayment()).toLocaleString()}</span>
+              <span className="font-semibold text-slate-650 font-mono">KES {(totalPrice() - calculateTotalDownPayment()).toLocaleString()}</span>
             </div>
             <div className="flex justify-between text-slate-500 text-xs">
               <span>Logistics Fee</span>
-              <span className="font-semibold text-slate-900 font-mono">KES 0</span>
+              <span className="font-semibold text-slate-900 font-mono">KES {logisticsFee.toLocaleString()}</span>
             </div>
             <div className="h-px bg-slate-100 my-4" />
             <div className="flex justify-between items-center">
@@ -299,7 +346,7 @@ export default function CheckoutPage() {
                 <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Aggregate Total</span>
                 <p className="text-[10px] text-slate-500">Escrow released on delivery</p>
               </div>
-              <span className="text-2xl font-bold text-slate-950 font-mono">KES {totalPrice().toLocaleString()}</span>
+              <span className="text-2xl font-bold text-slate-950 font-mono">KES {(totalPrice() + logisticsFee).toLocaleString()}</span>
             </div>
           </div>
 
