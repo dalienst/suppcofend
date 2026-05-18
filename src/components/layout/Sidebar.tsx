@@ -50,6 +50,8 @@ export function Sidebar({ role = "none" }: SidebarProps) {
     { name: "Roles", href: "/supplier/roles", icon: ShieldCheck },
     { name: "Products", href: "/supplier/products", icon: Package },
     { name: "Staff", href: "/supplier/staff", icon: Users },
+    { name: "My Orders", href: "/supplier/orders", icon: Truck },
+    { name: "Payments", href: "/supplier/payments", icon: CreditCard },
   ]
 
   const links = role === "supplier" ? supplierLinks : role === "contractor" ? contractorLinks : []

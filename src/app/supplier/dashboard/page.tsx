@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query"
 import api from "@/lib/api"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
   Building2,
   Package,
@@ -55,8 +56,8 @@ interface Branch {
   reference: string
   name: string
 }
-
 export default function SupplierDashboard() {
+  const router = useRouter()
 
   // 1. Fetch Real-time Products Data
   const { data: productsData, isLoading: isLoadingProducts } = useQuery<any>({
@@ -125,28 +126,32 @@ export default function SupplierDashboard() {
       value: `KES ${totalRevenue.toLocaleString()}`,
       icon: DollarSign,
       color: "bg-suppblue-600 text-white shadow-suppblue-500/20",
-      description: "From active orders"
+      description: "From active orders",
+      href: "/supplier/payments"
     },
     {
       label: "Active Products",
       value: String(totalProducts),
       icon: Package,
       color: "bg-indigo-600 text-white shadow-indigo-500/20",
-      description: "Listed in catalogue"
+      description: "Listed in catalogue",
+      href: "/supplier/products"
     },
     {
       label: "Fulfillment Requests",
       value: String(totalOrders),
       icon: Clock,
       color: "bg-amber-500 text-white shadow-amber-500/20",
-      description: `${pendingOrders} awaiting dispatch`
+      description: `${pendingOrders} awaiting dispatch`,
+      href: "/supplier/orders"
     },
     {
       label: "Operational Branches",
       value: String(totalBranches),
       icon: Building2,
       color: "bg-emerald-600 text-white shadow-emerald-500/20",
-      description: "Assigned base locations"
+      description: "Assigned base locations",
+      href: "/supplier/branches"
     },
   ]
 
@@ -191,7 +196,11 @@ export default function SupplierDashboard() {
       {/* Stats Widgets Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
-          <div key={stat.label} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-start justify-between group hover:shadow-md transition-all duration-300">
+          <button
+            key={stat.label}
+            onClick={() => stat.href && router.push(stat.href)}
+            className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-start justify-between group hover:shadow-md transition-all duration-300 cursor-pointer text-left w-full hover:-translate-y-1 active:scale-98"
+          >
             <div className="space-y-2">
               <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">{stat.label}</p>
               <h3 className="text-2xl font-bold text-slate-900 tracking-tight">{stat.value}</h3>
@@ -200,7 +209,7 @@ export default function SupplierDashboard() {
             <div className={cn("w-10 h-10 rounded-2xl flex items-center justify-center shadow-md", stat.color)}>
               <stat.icon className="w-5 h-5" />
             </div>
-          </div>
+          </button>
         ))}
       </div>
 
@@ -214,9 +223,18 @@ export default function SupplierDashboard() {
               <h2 className="font-bold text-slate-900 text-lg">Fulfillment Requests</h2>
               <p className="text-slate-500 text-[11px] mt-0.5">Fulfillment tasks submitted by general contractors.</p>
             </div>
-            <span className="bg-slate-100 text-slate-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">
-              {ordersList.length} Active
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="bg-slate-100 text-slate-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                {ordersList.length} Active
+              </span>
+              <Link
+                href="/supplier/orders"
+                className="text-xs font-semibold text-suppblue-605 hover:text-suppblue-700 flex items-center gap-1"
+              >
+                View All
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
 
           <div className="flex-1 overflow-x-auto">
