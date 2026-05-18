@@ -38,6 +38,23 @@ export default function CheckoutPage() {
   const [selectedSite, setSelectedSite] = useState<string>("")
   const [deliveryAddress, setDeliveryAddress] = useState<string>("")
 
+  // Calculate sum of initial required down payments (escrows)
+  const calculateTotalDownPayment = () => {
+    return items.reduce((acc: number, item: CartItem) => {
+      const itemTotal = item.price * item.quantity
+      if (item.payment_type === "PAYMENT_ON_DELIVERY") {
+        return acc + 0
+      }
+      if (item.payment_type === "SPLIT_50_50") {
+        return acc + (0.5 * itemTotal)
+      }
+      if (item.payment_type === "FLEXIBLE" && item.deposit_amount !== undefined) {
+        return acc + item.deposit_amount
+      }
+      return acc + itemTotal
+    }, 0)
+  }
+
   // Check if any cart item has a flexible plan
   const flexibleItem = items.find((item: CartItem) => item.deposit_amount !== undefined)
 
@@ -168,7 +185,6 @@ export default function CheckoutPage() {
             </h2>
             <div className="divide-y divide-slate-100">
               {items.map((item: CartItem) => {
-                const isFlexible = item.deposit_amount !== undefined
                 return (
                   <div key={`${item.reference}-${item.paymentOptionReference}`} className="py-4 flex items-center justify-between first:pt-0 last:pb-0">
                     <div className="flex items-center gap-4">
@@ -188,9 +204,19 @@ export default function CheckoutPage() {
                       <p className="text-xs font-mono font-bold text-slate-950">
                         KES {(item.price * item.quantity).toLocaleString()}
                       </p>
-                      {isFlexible && (
-                        <p className="text-[10px] text-jungle-700 font-semibold">
-                          Deposit: KES {item.deposit_amount?.toLocaleString()}
+                      {item.payment_type === "FLEXIBLE" && item.deposit_amount !== undefined && (
+                        <p className="text-[10px] text-jungle-750 font-semibold">
+                          Down Payment: KES {item.deposit_amount?.toLocaleString()}
+                        </p>
+                      )}
+                      {item.payment_type === "SPLIT_50_50" && (
+                        <p className="text-[10px] text-suppblue-600 font-semibold">
+                          50% Deposit: KES {(0.5 * item.price * item.quantity).toLocaleString()}
+                        </p>
+                      )}
+                      {item.payment_type === "PAYMENT_ON_DELIVERY" && (
+                        <p className="text-[10px] text-emerald-600 font-semibold">
+                          0% Down Payment
                         </p>
                       )}
                     </div>
@@ -244,6 +270,14 @@ export default function CheckoutPage() {
               <span className="font-semibold text-slate-900 font-mono">KES {totalPrice().toLocaleString()}</span>
             </div>
             <div className="flex justify-between text-slate-500 text-xs">
+              <span>Immediate Down Payment Due</span>
+              <span className="font-semibold text-jungle-750 font-mono">KES {calculateTotalDownPayment().toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between text-slate-500 text-xs">
+              <span>Future Financed Ledger</span>
+              <span className="font-semibold text-slate-600 font-mono">KES {(totalPrice() - calculateTotalDownPayment()).toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between text-slate-500 text-xs">
               <span>Logistics Fee</span>
               <span className="font-semibold text-slate-900 font-mono">KES 0</span>
             </div>
@@ -253,7 +287,7 @@ export default function CheckoutPage() {
                 <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Aggregate Total</span>
                 <p className="text-[10px] text-slate-500">Escrow released on delivery</p>
               </div>
-              <span className="text-2xl font-bold text-jungle-700 font-mono">KES {totalPrice().toLocaleString()}</span>
+              <span className="text-2xl font-bold text-slate-950 font-mono">KES {totalPrice().toLocaleString()}</span>
             </div>
           </div>
 

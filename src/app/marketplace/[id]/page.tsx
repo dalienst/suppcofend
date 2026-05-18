@@ -84,7 +84,8 @@ export default function ProductDetailPage() {
         duration_months: durationToSave,
         monthly_amount: monthlyToSave,
         company_reference: product.company_reference,
-        company_name: product.company_name
+        company_name: product.company_name,
+        payment_type: activeOption?.payment_type
       })
 
       toast.success("Added to procurement cart!")

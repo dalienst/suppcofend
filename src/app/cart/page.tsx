@@ -24,10 +24,18 @@ export default function CartPage() {
   // Calculate sum of initial required down payments (escrows)
   const calculateTotalDownPayment = () => {
     return items.reduce((acc: number, item: CartItem) => {
-      if (item.deposit_amount !== undefined) {
+      const itemTotal = item.price * item.quantity
+      if (item.payment_type === "PAYMENT_ON_DELIVERY") {
+        return acc + 0
+      }
+      if (item.payment_type === "SPLIT_50_50") {
+        return acc + (0.5 * itemTotal)
+      }
+      if (item.payment_type === "FLEXIBLE" && item.deposit_amount !== undefined) {
         return acc + item.deposit_amount
       }
-      return acc + (item.price * item.quantity)
+      // FIXED or standard fallback is 100% full subtotal
+      return acc + itemTotal
     }, 0)
   }
 
@@ -75,8 +83,6 @@ export default function CartPage() {
         {/* Item List */}
         <div className="lg:col-span-2 space-y-6">
           {items.map((item: CartItem) => {
-            const isFlexible = item.deposit_amount !== undefined
-
             return (
               <div
                 key={`${item.reference}-${item.paymentOptionReference}`}
@@ -85,7 +91,9 @@ export default function CartPage() {
                 {/* Visual Accent */}
                 <div className={cn(
                   "absolute left-0 top-0 bottom-0 w-1",
-                  isFlexible ? "bg-jungle-500" : "bg-suppblue-500"
+                  item.payment_type === "FLEXIBLE" ? "bg-jungle-500" :
+                  item.payment_type === "SPLIT_50_50" ? "bg-suppblue-500" :
+                  item.payment_type === "PAYMENT_ON_DELIVERY" ? "bg-emerald-500" : "bg-slate-900"
                 )} />
 
                 <div className="w-20 h-20 bg-slate-50 border border-slate-100 rounded-2xl flex-shrink-0 flex items-center justify-center">
@@ -121,9 +129,9 @@ export default function CartPage() {
                     </div>
                   </div>
 
-                  {/* Flexible Amortization Custom Details */}
-                  {isFlexible && (
-                    <div className="p-4 bg-jungle-50/30 border border-jungle-100/50 rounded-2xl grid grid-cols-3 gap-2 text-left">
+                  {/* Plan Custom Details */}
+                  {item.payment_type === "FLEXIBLE" && item.deposit_amount !== undefined && (
+                    <div className="p-4 bg-jungle-50/30 border border-jungle-100/50 rounded-2xl grid grid-cols-3 gap-2 text-left animate-in fade-in duration-300">
                       <div>
                         <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Required Down Payment</p>
                         <p className="text-xs font-mono font-semibold text-slate-900 mt-0.5">
@@ -140,6 +148,51 @@ export default function CartPage() {
                         <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Monthly Cost</p>
                         <p className="text-xs font-mono font-semibold text-jungle-750 mt-0.5">
                           KES {item.monthly_amount ? Math.ceil(item.monthly_amount).toLocaleString() : 0} / mo
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {item.payment_type === "SPLIT_50_50" && (
+                    <div className="p-4 bg-suppblue-50/30 border border-suppblue-100/50 rounded-2xl grid grid-cols-2 gap-4 text-left animate-in fade-in duration-300">
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Due Immediately (50%)</p>
+                        <p className="text-xs font-mono font-semibold text-suppblue-700 mt-0.5">
+                          KES {(0.5 * item.price * item.quantity).toLocaleString()}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Due on Delivery (50%)</p>
+                        <p className="text-xs font-mono font-semibold text-slate-900 mt-0.5">
+                          KES {(0.5 * item.price * item.quantity).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {item.payment_type === "PAYMENT_ON_DELIVERY" && (
+                    <div className="p-4 bg-emerald-50/30 border border-emerald-100/50 rounded-2xl grid grid-cols-2 gap-4 text-left animate-in fade-in duration-300">
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Due Immediately (0%)</p>
+                        <p className="text-xs font-mono font-semibold text-slate-400 mt-0.5">
+                          KES 0
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Due on Delivery (100%)</p>
+                        <p className="text-xs font-mono font-semibold text-emerald-700 mt-0.5">
+                          KES {(item.price * item.quantity).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {item.payment_type === "FIXED" && (
+                    <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl grid grid-cols-1 gap-2 text-left animate-in fade-in duration-300">
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Release Schedule</p>
+                        <p className="text-xs font-semibold text-slate-600 mt-0.5 leading-relaxed">
+                          100% full immediate release via escrow upon confirmed materials dispatch and logistics verification.
                         </p>
                       </div>
                     </div>

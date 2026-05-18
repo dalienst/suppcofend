@@ -15,6 +15,7 @@ export interface CartItem {
   monthly_amount?: number
   company_reference?: string
   company_name?: string
+  payment_type?: string
 }
 
 interface CartStore {
