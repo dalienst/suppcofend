@@ -28,12 +28,16 @@ export function Sidebar({ role = "none" }: SidebarProps) {
   const pathname = usePathname()
   
   const contractorLinks = [
-    { name: "Dashboard", href: "/contractor/dashboard", icon: LayoutDashboard },
+    { name: "Overview", href: "/contractor/dashboard", icon: LayoutDashboard },
     { name: "Business Profile", href: "/contractor/company", icon: Building2 },
+    { name: "Sites Mgmt", href: "/contractor/sites", icon: Warehouse },
+    { name: "Inventory", href: "/contractor/inventory", icon: PackageSearch },
+    { name: "Roles", href: "/contractor/roles", icon: ShieldCheck },
+    { name: "Products", href: "/contractor/products", icon: Package },
+    { name: "Staff", href: "/contractor/staff", icon: Users },
     { name: "Marketplace", href: "/marketplace", icon: ShoppingBag },
     { name: "My Orders", href: "/contractor/orders", icon: Truck },
     { name: "Payments", href: "/contractor/payments", icon: CreditCard },
-    { name: "Sites", href: "/contractor/sites", icon: Warehouse },
   ]
 
   const supplierLinks = [

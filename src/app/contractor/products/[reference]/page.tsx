@@ -12,7 +12,6 @@ import {
   ArrowLeft, 
   Settings, 
   Layers, 
-  Coins, 
   Edit3, 
   Save, 
   Plus, 
@@ -50,6 +49,7 @@ interface ProductDetail {
   sublayeritem: string | null;
   bracket: string | null;
   branch: string | null;
+  site: string | null;
   layer_details?: { reference: string; name: string } | null;
   sublayer_details?: { reference: string; name: string } | null;
   sublayeritem_details?: { reference: string; name: string } | null;
@@ -64,7 +64,7 @@ const editProductSchema = z.object({
   price: z.union([z.number(), z.string()]),
   unit: z.string().optional().or(z.literal("")),
   source_location: z.string().optional().or(z.literal("")),
-  branch: z.string().optional().or(z.literal("")),
+  site: z.string().optional().or(z.literal("")),
 })
 
 type EditProductValues = z.infer<typeof editProductSchema>
@@ -75,9 +75,8 @@ export default function ProductDetailPage() {
   const queryClient = useQueryClient()
   const reference = params?.reference as string
 
-  const [activeTab, setActiveTab] = useState<"overview" | "edit" | "specs" | "payment">("overview")
+  const [activeTab, setActiveTab] = useState<"overview" | "edit" | "specs">("overview")
   const [specRows, setSpecRows] = useState<{ id: string; key: string; value: string }[]>([])
-  const [selectedPaymentOpts, setSelectedPaymentOpts] = useState<string[]>([])
 
   // Query: Fetch Product details
   const { data: product, isLoading, error } = useQuery<ProductDetail>({
@@ -89,20 +88,11 @@ export default function ProductDetailPage() {
     enabled: !!reference,
   })
 
-  // Query: Fetch Payment Options
-  const { data: allPaymentOptions } = useQuery<PaymentOption[]>({
-    queryKey: ["paymentoptions"],
+  // Query: Fetch Sites
+  const { data: sites } = useQuery({
+    queryKey: ["sites"],
     queryFn: async () => {
-      const response = await api.get("/api/v1/paymentoptions/")
-      return response.data.results
-    }
-  })
-
-  // Query: Fetch Branches
-  const { data: branches } = useQuery({
-    queryKey: ["branches"],
-    queryFn: async () => {
-      const response = await api.get("/api/v1/branches/")
+      const response = await api.get("/api/v1/sites/")
       return response.data.results || response.data
     }
   })
@@ -126,9 +116,8 @@ export default function ProductDetailPage() {
         price: Number(product.price) || 0,
         unit: product.unit || "",
         source_location: product.source_location || "",
-        branch: product.branch || "",
+        site: product.site || "",
       })
-      setSelectedPaymentOpts(product.payment_options || [])
 
       if (product.specifications) {
         const rows = Object.entries(product.specifications).map(([key, val], idx) => ({
@@ -150,7 +139,7 @@ export default function ProductDetailPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["product-detail", reference] })
-      queryClient.invalidateQueries({ queryKey: ["supplier-products"] })
+      queryClient.invalidateQueries({ queryKey: ["contractor-products"] })
       toast.success("Product updated successfully!")
     },
     onError: (err: any) => {
@@ -196,25 +185,10 @@ export default function ProductDetailPage() {
     })
   }
 
-  // Payment Option selection actions
-  const togglePaymentOption = (optRef: string) => {
-    if (selectedPaymentOpts.includes(optRef)) {
-      setSelectedPaymentOpts(selectedPaymentOpts.filter(r => r !== optRef))
-    } else {
-      setSelectedPaymentOpts([...selectedPaymentOpts, optRef])
-    }
-  }
-
-  const handleSavePaymentOptions = () => {
-    updateMutation.mutate({
-      payment_options: selectedPaymentOpts
-    })
-  }
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[80vh]">
-        <Loader2 className="w-10 h-10 animate-spin text-suppblue-600" />
+        <Loader2 className="w-10 h-10 animate-spin text-jungle-600" />
       </div>
     )
   }
@@ -226,7 +200,7 @@ export default function ProductDetailPage() {
         <h2 className="text-xl font-bold text-slate-900">Product Not Found</h2>
         <p className="text-slate-500">The product reference might be invalid or you may not have permission to view it.</p>
         <button 
-          onClick={() => router.push("/supplier/products")}
+          onClick={() => router.push("/contractor/products")}
           className="bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold transition-all text-sm"
         >
           Return to Catalog
@@ -241,12 +215,12 @@ export default function ProductDetailPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => router.push("/supplier/products")}
+            onClick={() => router.push("/contractor/products")}
             className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-slate-500"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <div className="w-12 h-12 bg-suppblue-50 text-suppblue-600 rounded-2xl flex items-center justify-center shrink-0 shadow-sm border border-suppblue-100">
+          <div className="w-12 h-12 bg-jungle-50 text-jungle-600 rounded-2xl flex items-center justify-center shrink-0 shadow-sm border border-jungle-100">
             <Package className="w-6 h-6" />
           </div>
           <div>
@@ -267,7 +241,7 @@ export default function ProductDetailPage() {
           className={cn(
             "px-5 py-3 text-sm font-bold border-b-2 whitespace-nowrap transition-all flex items-center gap-2",
             activeTab === "overview"
-              ? "border-suppblue-600 text-suppblue-600 bg-suppblue-50/10"
+              ? "border-jungle-600 text-jungle-600 bg-jungle-50/10"
               : "border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50"
           )}
         >
@@ -278,7 +252,7 @@ export default function ProductDetailPage() {
           className={cn(
             "px-5 py-3 text-sm font-bold border-b-2 whitespace-nowrap transition-all flex items-center gap-2",
             activeTab === "edit"
-              ? "border-suppblue-600 text-suppblue-600 bg-suppblue-50/10"
+              ? "border-jungle-600 text-jungle-600 bg-jungle-50/10"
               : "border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50"
           )}
         >
@@ -289,22 +263,11 @@ export default function ProductDetailPage() {
           className={cn(
             "px-5 py-3 text-sm font-bold border-b-2 whitespace-nowrap transition-all flex items-center gap-2",
             activeTab === "specs"
-              ? "border-suppblue-600 text-suppblue-600 bg-suppblue-50/10"
+              ? "border-jungle-600 text-jungle-600 bg-jungle-50/10"
               : "border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50"
           )}
         >
           <Settings className="w-4 h-4" /> Specifications
-        </button>
-        <button
-          onClick={() => setActiveTab("payment")}
-          className={cn(
-            "px-5 py-3 text-sm font-bold border-b-2 whitespace-nowrap transition-all flex items-center gap-2",
-            activeTab === "payment"
-              ? "border-suppblue-600 text-suppblue-600 bg-suppblue-50/10"
-              : "border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50"
-          )}
-        >
-          <Coins className="w-4 h-4" /> Payment Options
         </button>
       </div>
 
@@ -326,14 +289,14 @@ export default function ProductDetailPage() {
                 </div>
                 <div className="p-4 bg-slate-50 rounded-xl">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Unit Price</p>
-                  <p className="text-2xl font-black text-suppblue-600 mt-1">KES {Number(product.price).toLocaleString()}</p>
+                  <p className="text-2xl font-black text-jungle-600 mt-1">KES {Number(product.price).toLocaleString()}</p>
                 </div>
               </div>
 
               {/* Location Stack */}
               <div className="space-y-3">
                 <h3 className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-suppblue-600" />
+                  <MapPin className="w-4 h-4 text-jungle-600" />
                   Assigned Storage Location
                 </h3>
                 
@@ -360,7 +323,7 @@ export default function ProductDetailPage() {
               {/* Specs overview */}
               <div className="space-y-3">
                 <h3 className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
-                  <Tag className="w-4 h-4 text-suppblue-600" />
+                  <Tag className="w-4 h-4 text-jungle-600" />
                   Specifications
                 </h3>
                 {product.specifications && Object.keys(product.specifications).length > 0 ? (
@@ -387,7 +350,7 @@ export default function ProductDetailPage() {
                 <button
                   type="submit"
                   disabled={updateMutation.isPending}
-                  className="bg-suppblue-600 hover:bg-suppblue-700 disabled:opacity-50 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition-all"
+                  className="bg-jungle-600 hover:bg-jungle-700 disabled:opacity-50 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition-all"
                 >
                   {updateMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                   Save Core Details
@@ -399,7 +362,7 @@ export default function ProductDetailPage() {
                   <label className="text-sm font-bold text-slate-700">Display Name</label>
                   <input
                     {...register("product_name")}
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-suppblue-500/10 focus:border-suppblue-600 outline-none transition-all"
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-jungle-500/10 focus:border-jungle-600 outline-none transition-all"
                   />
                   {errors.product_name && <p className="text-xs text-red-500 mt-1">{errors.product_name.message}</p>}
                 </div>
@@ -409,7 +372,7 @@ export default function ProductDetailPage() {
                   <input
                     type="number"
                     {...register("quantity")}
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-suppblue-500/10 focus:border-suppblue-600 outline-none transition-all"
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-jungle-500/10 focus:border-jungle-600 outline-none transition-all"
                   />
                   {errors.quantity && <p className="text-xs text-red-500 mt-1">{errors.quantity.message}</p>}
                 </div>
@@ -419,7 +382,7 @@ export default function ProductDetailPage() {
                   <input
                     {...register("unit")}
                     placeholder="Pieces, bags, kg..."
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-suppblue-500/10 focus:border-suppblue-600 outline-none transition-all"
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-jungle-500/10 focus:border-jungle-600 outline-none transition-all"
                   />
                 </div>
 
@@ -429,7 +392,7 @@ export default function ProductDetailPage() {
                     type="number"
                     step="0.01"
                     {...register("price")}
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-suppblue-500/10 focus:border-suppblue-600 outline-none transition-all font-bold text-slate-800"
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-jungle-500/10 focus:border-jungle-600 outline-none transition-all font-bold text-slate-800"
                   />
                   {errors.price && <p className="text-xs text-red-500 mt-1">{errors.price.message}</p>}
                 </div>
@@ -439,19 +402,19 @@ export default function ProductDetailPage() {
                   <input
                     {...register("source_location")}
                     placeholder="e.g. Warehouse 4B, Nairobi"
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-suppblue-500/10 focus:border-suppblue-600 outline-none transition-all"
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-jungle-500/10 focus:border-jungle-600 outline-none transition-all"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700">Assigned Branch (Optional)</label>
+                  <label className="text-sm font-bold text-slate-700">Assigned Site (Optional)</label>
                   <select
-                    {...register("branch")}
-                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-suppblue-500/10 focus:border-suppblue-600 outline-none transition-all"
+                    {...register("site")}
+                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-jungle-500/10 focus:border-jungle-600 outline-none transition-all"
                   >
-                    <option value="">No branch</option>
-                    {branches?.map((b: any) => (
-                      <option key={b.identity} value={b.identity}>{b.name}</option>
+                    <option value="">No site mapped</option>
+                    {sites?.map((s: any) => (
+                      <option key={s.identity} value={s.identity}>{s.name}</option>
                     ))}
                   </select>
                 </div>
@@ -470,7 +433,7 @@ export default function ProductDetailPage() {
                 <button
                   onClick={handleSaveSpecifications}
                   disabled={updateMutation.isPending}
-                  className="bg-suppblue-600 hover:bg-suppblue-700 disabled:opacity-50 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition-all"
+                  className="bg-jungle-600 hover:bg-jungle-700 disabled:opacity-50 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition-all"
                 >
                   {updateMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                   Save Specifications
@@ -495,13 +458,13 @@ export default function ProductDetailPage() {
                         placeholder="Attribute (e.g. Thickness)"
                         value={row.key}
                         onChange={(e) => updateSpecRow(row.id, "key", e.target.value)}
-                        className="flex-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-suppblue-500/10 focus:border-suppblue-600 outline-none"
+                        className="flex-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-jungle-500/10 focus:border-jungle-600 outline-none"
                       />
                       <input
                         placeholder="Value (e.g. 12mm)"
                         value={row.value}
                         onChange={(e) => updateSpecRow(row.id, "value", e.target.value)}
-                        className="flex-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-suppblue-500/10 focus:border-suppblue-600 outline-none"
+                        className="flex-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-jungle-500/10 focus:border-jungle-600 outline-none"
                       />
                       <button
                         onClick={() => removeSpecRow(row.id)}
@@ -515,7 +478,7 @@ export default function ProductDetailPage() {
                   
                   <button
                     onClick={addSpecRow}
-                    className="text-xs font-bold text-suppblue-700 bg-suppblue-50 hover:bg-suppblue-100 px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5"
+                    className="text-xs font-bold text-jungle-700 bg-jungle-50 hover:bg-jungle-100 px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5"
                   >
                     <Plus className="w-4 h-4" /> Add Row
                   </button>
@@ -523,63 +486,6 @@ export default function ProductDetailPage() {
               )}
             </div>
           )}
-
-          {/* TAB 4: PAYMENT OPTIONS */}
-          {activeTab === "payment" && (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <div>
-                  <h2 className="text-lg font-bold text-slate-900">Supported Payment Policies</h2>
-                  <p className="text-xs text-slate-500 mt-0.5">Select which store-wide policies you want to accept specifically for this product.</p>
-                </div>
-                <button
-                  onClick={handleSavePaymentOptions}
-                  disabled={updateMutation.isPending}
-                  className="bg-suppblue-600 hover:bg-suppblue-700 disabled:opacity-50 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition-all"
-                >
-                  {updateMutation.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-                  Save Payment Methods
-                </button>
-              </div>
-
-              {!allPaymentOptions || allPaymentOptions.length === 0 ? (
-                <div className="p-8 text-center bg-slate-50 border border-slate-200 rounded-xl space-y-3">
-                  <p className="text-sm text-slate-500">You haven't configured any payment options yet.</p>
-                  <button
-                    onClick={() => router.push("/supplier/payment-options")}
-                    className="text-xs font-bold text-white bg-suppblue-600 hover:bg-suppblue-700 px-4 py-2 rounded-lg"
-                  >
-                    Configure Payment Options
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {allPaymentOptions.map((opt) => {
-                    const isSelected = selectedPaymentOpts.includes(opt.reference)
-                    return (
-                      <button
-                        key={opt.reference}
-                        onClick={() => togglePaymentOption(opt.reference)}
-                        className={cn(
-                          "flex items-center justify-between p-4 rounded-xl border-2 transition-all text-left",
-                          isSelected
-                            ? "border-suppblue-600 bg-suppblue-50 text-suppblue-700 font-bold"
-                            : "border-slate-100 bg-slate-50 text-slate-600 hover:border-slate-200"
-                        )}
-                      >
-                        <div>
-                          <p className="text-sm font-bold">{opt.name}</p>
-                          <p className="text-[10px] opacity-70 mt-1 uppercase font-mono">{opt.payment_type}</p>
-                        </div>
-                        {isSelected && <Check className="w-5 h-5 text-suppblue-600 shrink-0" />}
-                      </button>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-
         </div>
 
         {/* Right Side: Quick Action Stats Card (1 col) */}
@@ -588,10 +494,10 @@ export default function ProductDetailPage() {
             <h3 className="text-sm font-bold text-slate-700 uppercase tracking-widest">Listing Status</h3>
             
             <div className="flex items-center gap-3">
-              <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <span className="w-3 h-3 rounded-full bg-slate-300 shrink-0" />
               <div>
-                <p className="font-bold text-sm text-slate-900">Active & Listed</p>
-                <p className="text-xs text-slate-400 mt-0.5">Visible to contractors in Marketplace</p>
+                <p className="font-bold text-sm text-slate-900">Internal Storage</p>
+                <p className="text-xs text-slate-400 mt-0.5">Not visible on public marketplace</p>
               </div>
             </div>
 
@@ -604,22 +510,6 @@ export default function ProductDetailPage() {
                 <span>Created At:</span>
                 <span className="text-slate-800">{(product as any).created_at ? new Date((product as any).created_at).toLocaleDateString() : "N/A"}</span>
               </div>
-              <div className="flex justify-between">
-                <span>Payment Policies:</span>
-                <span className="text-slate-800 font-bold">{product.payment_options_details?.length || 0} accepted</span>
-              </div>
-            </div>
-
-            {/* Quick action buttons */}
-            <div className="pt-4 border-t border-slate-100 space-y-2">
-              <a
-                href="/marketplace"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-2.5 bg-slate-950 hover:bg-slate-900 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-all text-center block"
-              >
-                View on Marketplace
-              </a>
             </div>
           </div>
           

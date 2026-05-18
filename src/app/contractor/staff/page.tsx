@@ -9,7 +9,7 @@ import api from "@/lib/api"
 import { 
   Users, 
   UserPlus, 
-  Building2, 
+  Warehouse, 
   Mail, 
   Phone, 
   MapPin, 
@@ -18,7 +18,6 @@ import {
   Loader2, 
   X, 
   Check, 
-  AlertCircle,
   FileText,
   BadgeInfo,
   Link,
@@ -33,7 +32,7 @@ import toast from "react-hot-toast"
 import { cn } from "@/lib/utils"
 
 // TypeScript Interfaces matching API response
-interface Branch {
+interface Site {
   reference: string
   name: string
   address: string | null
@@ -75,7 +74,6 @@ interface EmployeeUser {
   location: string | null
   assigned_branch: string | null
   assigned_site: string | null
-  assigned_branch_details: MiniBranchSiteDetail | null
   assigned_site_details: MiniBranchSiteDetail | null
   employment: EmploymentDetail[]
 }
@@ -92,12 +90,12 @@ const inviteSchema = z.object({
   kra_pin: z.string().optional().or(z.literal("")),
   location: z.string().optional().or(z.literal("")),
   role: z.string().min(1, "Selecting a role is required"),
-  branch: z.string().optional().or(z.literal("")),
+  site: z.string().optional().or(z.literal("")),
 })
 
 type InviteValues = z.infer<typeof inviteSchema>
 
-export default function SupplierStaffPage() {
+export default function ContractorStaffPage() {
   const queryClient = useQueryClient()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [assigningEmployee, setAssigningEmployee] = useState<EmployeeUser | null>(null)
@@ -122,7 +120,7 @@ export default function SupplierStaffPage() {
       kra_pin: "",
       location: "",
       role: "",
-      branch: "",
+      site: "",
     }
   })
 
@@ -138,7 +136,7 @@ export default function SupplierStaffPage() {
 
   // 2. Fetch Employee Users List
   const { data: employeesData, isLoading: isLoadingStaff } = useQuery<EmployeeUser[]>({
-    queryKey: ["supplier-staff"],
+    queryKey: ["contractor-staff"],
     queryFn: async () => {
       const response = await api.get("/api/v1/auth/add/employee/")
       return response.data.results || response.data
@@ -147,18 +145,18 @@ export default function SupplierStaffPage() {
 
   // 3. Fetch Company Roles
   const { data: rolesData } = useQuery<Role[]>({
-    queryKey: ["supplier-roles"],
+    queryKey: ["contractor-roles"],
     queryFn: async () => {
       const response = await api.get("/api/v1/roles/")
       return response.data.results || response.data
     }
   })
 
-  // 4. Fetch Operational Branches
-  const { data: branchesData } = useQuery<Branch[]>({
-    queryKey: ["supplier-branches"],
+  // 4. Fetch Operational Sites
+  const { data: sitesData } = useQuery<Site[]>({
+    queryKey: ["contractor-sites"],
     queryFn: async () => {
-      const response = await api.get("/api/v1/branches/")
+      const response = await api.get("/api/v1/sites/")
       return response.data.results || response.data
     }
   })
@@ -171,11 +169,11 @@ export default function SupplierStaffPage() {
         ...data,
         company: company?.identity,
         role: data.role,
-        branch: data.branch || undefined
+        site: data.site || undefined
       })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["supplier-staff"] })
+      queryClient.invalidateQueries({ queryKey: ["contractor-staff"] })
       toast.success("Employee invited successfully! Credentials email dispatched.")
       closeModal()
     },
@@ -188,26 +186,26 @@ export default function SupplierStaffPage() {
     }
   })
 
-  // 2. Assign Employee to Branch
+  // 2. Assign Employee to Site
   const assignMutation = useMutation({
-    mutationFn: async ({ employeeUsername, branchIdentity }: { employeeUsername: string, branchIdentity: string }) => {
+    mutationFn: async ({ employeeUsername, siteIdentity }: { employeeUsername: string, siteIdentity: string }) => {
       return api.post("/api/v1/employees/assign/", {
         employee_username: employeeUsername,
-        branch: branchIdentity
+        site: siteIdentity
       })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["supplier-staff"] })
-      toast.success("Employee assigned to branch successfully.")
+      queryClient.invalidateQueries({ queryKey: ["contractor-staff"] })
+      toast.success("Employee assigned to site successfully.")
       setAssigningEmployee(null)
     },
     onError: (err: any) => {
-      const errMsg = err?.response?.data?.non_field_errors?.[0] || "Failed to assign employee to branch."
+      const errMsg = err?.response?.data?.non_field_errors?.[0] || "Failed to assign employee to site."
       toast.error(errMsg)
     }
   })
 
-  // 3. Unassign Employee from Branch
+  // 3. Unassign Employee from Site
   const unassignMutation = useMutation({
     mutationFn: async (employeeUsername: string) => {
       return api.post("/api/v1/employees/unassign/", {
@@ -215,8 +213,8 @@ export default function SupplierStaffPage() {
       })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["supplier-staff"] })
-      toast.success("Branch assignment removed.")
+      queryClient.invalidateQueries({ queryKey: ["contractor-staff"] })
+      toast.success("Site assignment removed.")
     },
     onError: (err: any) => {
       const errMsg = err?.response?.data?.non_field_errors?.[0] || "Failed to remove assignment."
@@ -232,12 +230,12 @@ export default function SupplierStaffPage() {
         ...data,
         company: company?.identity,
         role: data.role,
-        branch: data.branch || null,
+        site: data.site || null,
         password: data.password || undefined
       })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["supplier-staff"] })
+      queryClient.invalidateQueries({ queryKey: ["contractor-staff"] })
       toast.success("Employee details updated successfully.")
       closeModal()
     },
@@ -256,7 +254,7 @@ export default function SupplierStaffPage() {
       return api.delete(`/api/v1/auth/add/employee/${username}/`)
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["supplier-staff"] })
+      queryClient.invalidateQueries({ queryKey: ["contractor-staff"] })
       toast.success("Employee account deleted/deactivated successfully.")
     },
     onError: (err: any) => {
@@ -290,7 +288,7 @@ export default function SupplierStaffPage() {
       kra_pin: employee.kra_pin || "",
       location: employee.location || "",
       role: employee.employment?.[0]?.role || "",
-      branch: employee.assigned_branch || "",
+      site: employee.assigned_site || "",
     })
     setIsModalOpen(true)
   }
@@ -309,15 +307,15 @@ export default function SupplierStaffPage() {
       kra_pin: "",
       location: "",
       role: "",
-      branch: "",
+      site: "",
     })
   }
 
-  const handleQuickAssign = (branchIdentity: string) => {
+  const handleQuickAssign = (siteIdentity: string) => {
     if (!assigningEmployee) return
     assignMutation.mutate({
       employeeUsername: assigningEmployee.username,
-      branchIdentity
+      siteIdentity
     })
   }
 
@@ -329,7 +327,7 @@ export default function SupplierStaffPage() {
   // Lookup helper lists
   const rawStaff = employeesData || []
   const roles = rolesData || []
-  const branches = branchesData || []
+  const sites = sitesData || []
 
   // Perform Local Search & Filtering
   const filteredStaff = rawStaff.filter((emp: EmployeeUser) =>
@@ -356,11 +354,11 @@ export default function SupplierStaffPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">Staff & Team Cockpit</h1>
-          <p className="text-slate-500 mt-1">Invite corporate employees, define role assignments, and link branches.</p>
+          <p className="text-slate-500 mt-1">Invite corporate employees, define role assignments, and link operational sites.</p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-suppblue-600 hover:bg-suppblue-700 text-white px-5 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all shadow-md shadow-suppblue-700/10 self-start sm:self-auto hover:-translate-y-0.5 active:translate-y-0"
+          className="bg-jungle-600 hover:bg-jungle-700 text-white px-5 py-3 rounded-2xl font-bold flex items-center gap-2 transition-all shadow-md shadow-jungle-700/10 self-start sm:self-auto hover:-translate-y-0.5 active:translate-y-0"
         >
           <UserPlus className="w-5 h-5" />
           Invite Staff Member
@@ -370,16 +368,16 @@ export default function SupplierStaffPage() {
       {/* Staff Roster Listing */}
       {isLoadingStaff ? (
         <div className="flex items-center justify-center min-h-[300px]">
-          <Loader2 className="w-8 h-8 animate-spin text-suppblue-600" />
+          <Loader2 className="w-8 h-8 animate-spin text-jungle-600" />
         </div>
       ) : rawStaff.length === 0 ? (
         <div className="bg-white border border-dashed border-slate-300 rounded-3xl p-16 text-center space-y-4">
-          <div className="w-16 h-16 bg-suppblue-50 text-suppblue-600 rounded-full flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 bg-jungle-50 text-jungle-600 rounded-full flex items-center justify-center mx-auto">
             <Users className="w-8 h-8" />
           </div>
           <div>
             <h3 className="font-bold text-slate-900 text-lg">No active staff members</h3>
-            <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto">You haven't invited any employees. Staff members can help manage physical branches, catalog listings, and order fullfilment.</p>
+            <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto">You haven't invited any employees. Staff members can help manage physical construction sites, track inventory items, and log reports.</p>
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
@@ -401,7 +399,7 @@ export default function SupplierStaffPage() {
                   value={searchQuery}
                   onChange={handleSearchChange}
                   placeholder="Search staff by name, email or username..."
-                  className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-suppblue-500/10 transition-all"
+                  className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-jungle-500/10 transition-all"
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -433,7 +431,7 @@ export default function SupplierStaffPage() {
                         {/* Name & Contact Info */}
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-suppblue-50 text-suppblue-700 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm uppercase">
+                            <div className="w-10 h-10 bg-jungle-50 text-jungle-700 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm uppercase">
                               {employee.first_name?.[0] || employee.username?.[0]}
                               {employee.last_name?.[0]}
                             </div>
@@ -453,7 +451,7 @@ export default function SupplierStaffPage() {
                         {/* Role Details */}
                         <td className="px-6 py-4">
                           <div className="space-y-1.5">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-extrabold bg-suppblue-50 text-suppblue-700">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-extrabold bg-jungle-50 text-jungle-700">
                               <ShieldCheck className="w-3.5 h-3.5" />
                               {matchedRole?.name || employeeRoleIdentity || "Employee"}
                             </span>
@@ -461,7 +459,7 @@ export default function SupplierStaffPage() {
                               {matchedRole?.is_head ? (
                                 <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 uppercase tracking-wide">
                                   <UserCheck className="w-3.5 h-3.5" />
-                                  Head of Branch
+                                  Head of Site
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100 uppercase tracking-wide">
@@ -491,19 +489,19 @@ export default function SupplierStaffPage() {
                           </div>
                         </td>
 
-                        {/* Branch Assignment */}
+                        {/* Site Assignment */}
                         <td className="px-6 py-4">
-                          {employee.assigned_branch ? (
+                          {employee.assigned_site_details ? (
                             <div className="flex items-center gap-2">
                               <div className="p-2 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-2 text-slate-800 text-xs font-bold shadow-sm">
-                                <Building2 className="w-4 h-4 text-suppblue-600 shrink-0" />
+                                <Warehouse className="w-4 h-4 text-jungle-600 shrink-0" />
                                 <span className="max-w-[120px] truncate">
-                                  {employee.assigned_branch_details?.name || employee.assigned_branch}
+                                  {employee.assigned_site_details?.name || employee.assigned_site}
                                 </span>
                               </div>
                               <button
                                 onClick={() => {
-                                  if (confirm(`Remove ${employee.first_name} from their branch assignment?`)) {
+                                  if (confirm(`Remove ${employee.first_name} from their site assignment?`)) {
                                     unassignMutation.mutate(employee.username)
                                   }
                                 }}
@@ -517,10 +515,10 @@ export default function SupplierStaffPage() {
                           ) : (
                             <button
                               onClick={() => setAssigningEmployee(employee)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-extrabold text-slate-600 bg-slate-100 hover:bg-suppblue-50 hover:text-suppblue-700 hover:border-suppblue-100 border border-transparent rounded-xl transition-all"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-extrabold text-slate-600 bg-slate-100 hover:bg-jungle-50 hover:text-jungle-700 hover:border-jungle-100 border border-transparent rounded-xl transition-all"
                             >
                               <Link className="w-3.5 h-3.5" />
-                              Assign Branch
+                              Assign Site
                             </button>
                           )}
                         </td>
@@ -539,7 +537,7 @@ export default function SupplierStaffPage() {
                             <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                               <button
                                 onClick={() => openEditModal(employee)}
-                                className="p-1.5 text-slate-400 hover:text-suppblue-700 hover:bg-suppblue-50 rounded-lg transition-all"
+                                className="p-1.5 text-slate-400 hover:text-jungle-700 hover:bg-jungle-50 rounded-lg transition-all"
                                 title="Edit Staff Profile"
                               >
                                 <Pencil className="w-4 h-4" />
@@ -609,12 +607,12 @@ export default function SupplierStaffPage() {
         </div>
       )}
 
-      {/* Quick Branch Assignment Dialog */}
+      {/* Quick Site Assignment Dialog */}
       {assigningEmployee && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl shadow-xl w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200 p-6 space-y-6">
             <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <h2 className="font-bold text-lg text-slate-900">Link Branch Location</h2>
+              <h2 className="font-bold text-lg text-slate-900">Link Site Location</h2>
               <button 
                 onClick={() => setAssigningEmployee(null)}
                 className="p-1 hover:bg-slate-100 rounded-full text-slate-400"
@@ -624,35 +622,35 @@ export default function SupplierStaffPage() {
             </div>
             
             <p className="text-sm text-slate-500">
-              Select which operational branch to assign <strong>{assigningEmployee.first_name} {assigningEmployee.last_name}</strong> to:
+              Select which operational site to assign <strong>{assigningEmployee.first_name} {assigningEmployee.last_name}</strong> to:
             </p>
 
-            {branches.length === 0 ? (
+            {sites.length === 0 ? (
               <div className="text-center p-4 bg-slate-50 rounded-2xl space-y-2">
-                <p className="text-xs text-slate-500">No branches configured.</p>
+                <p className="text-xs text-slate-500">No operational sites configured.</p>
                 <button
                   onClick={() => {
                     setAssigningEmployee(null)
-                    window.location.href = "/supplier/branches"
+                    window.location.href = "/contractor/sites"
                   }}
-                  className="text-xs font-bold text-suppblue-700 hover:underline"
+                  className="text-xs font-bold text-jungle-700 hover:underline"
                 >
-                  Configure Branches
+                  Configure Sites
                 </button>
               </div>
             ) : (
               <div className="space-y-2 max-h-[250px] overflow-y-auto pr-1">
-                {branches.map((b) => (
+                {sites.map((s) => (
                   <button
-                    key={b.reference}
-                    onClick={() => handleQuickAssign(b.identity)}
-                    className="w-full p-3 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-suppblue-50 hover:border-suppblue-200 hover:text-suppblue-700 text-left text-xs font-bold transition-all flex items-center justify-between"
+                    key={s.reference}
+                    onClick={() => handleQuickAssign(s.identity)}
+                    className="w-full p-3 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-jungle-50 hover:border-jungle-200 hover:text-jungle-700 text-left text-xs font-bold transition-all flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
-                      <Building2 className="w-4 h-4" />
-                      <span>{b.name}</span>
+                      <Warehouse className="w-4 h-4" />
+                      <span>{s.name}</span>
                     </div>
-                    <Check className="w-4 h-4 text-suppblue-600 opacity-0 group-hover:opacity-100" />
+                    <Check className="w-4 h-4 text-jungle-600 opacity-0 group-hover:opacity-100" />
                   </button>
                 ))}
               </div>
@@ -702,7 +700,7 @@ export default function SupplierStaffPage() {
                       <label className="text-xs font-bold text-slate-700 ml-0.5">First Name *</label>
                       <input
                         {...register("first_name")}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-jungle-500/20 transition-all outline-none"
                         placeholder="e.g. John"
                       />
                       {errors.first_name && <p className="text-[10px] text-red-500 ml-0.5">{errors.first_name.message}</p>}
@@ -712,7 +710,7 @@ export default function SupplierStaffPage() {
                       <label className="text-xs font-bold text-slate-700 ml-0.5">Last Name *</label>
                       <input
                         {...register("last_name")}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-jungle-500/20 transition-all outline-none"
                         placeholder="e.g. Doe"
                       />
                       {errors.last_name && <p className="text-[10px] text-red-500 ml-0.5">{errors.last_name.message}</p>}
@@ -725,7 +723,7 @@ export default function SupplierStaffPage() {
                       <input
                         {...register("username")}
                         disabled={!!editingEmployee}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-jungle-500/20 transition-all outline-none disabled:opacity-60 disabled:cursor-not-allowed"
                         placeholder="e.g. johndoe"
                       />
                       {errors.username && <p className="text-[10px] text-red-500 ml-0.5">{errors.username.message}</p>}
@@ -736,7 +734,7 @@ export default function SupplierStaffPage() {
                       <input
                         type="email"
                         {...register("email")}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-jungle-500/20 transition-all outline-none"
                         placeholder="e.g. john@suppco.com"
                       />
                       {errors.email && <p className="text-[10px] text-red-500 ml-0.5">{errors.email.message}</p>}
@@ -750,7 +748,7 @@ export default function SupplierStaffPage() {
                     <input
                       type="text"
                       {...register("password")}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none font-mono"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-jungle-500/20 transition-all outline-none font-mono"
                       placeholder={editingEmployee ? "Optional new password" : "Input temporary pass for their initial login"}
                     />
                     {errors.password && <p className="text-[10px] text-red-500 ml-0.5">{errors.password.message}</p>}
@@ -765,7 +763,7 @@ export default function SupplierStaffPage() {
                       <label className="text-xs font-bold text-slate-700 ml-0.5">National ID / Passport</label>
                       <input
                         {...register("identification")}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-jungle-500/20 transition-all outline-none"
                         placeholder="ID number"
                       />
                     </div>
@@ -774,7 +772,7 @@ export default function SupplierStaffPage() {
                       <label className="text-xs font-bold text-slate-700 ml-0.5">KRA Tax PIN</label>
                       <input
                         {...register("kra_pin")}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none uppercase"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-jungle-500/20 transition-all outline-none uppercase"
                         placeholder="A012345678Z"
                       />
                     </div>
@@ -785,7 +783,7 @@ export default function SupplierStaffPage() {
                       <label className="text-xs font-bold text-slate-700 ml-0.5">Phone Number</label>
                       <input
                         {...register("phone")}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-jungle-500/20 transition-all outline-none"
                         placeholder="e.g. +254 700 000 000"
                       />
                     </div>
@@ -794,14 +792,14 @@ export default function SupplierStaffPage() {
                       <label className="text-xs font-bold text-slate-700 ml-0.5">Base Location</label>
                       <input
                         {...register("location")}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none"
-                        placeholder="e.g. Mombasa Central"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-jungle-500/20 transition-all outline-none"
+                        placeholder="e.g. Nairobi Head Office"
                       />
                     </div>
                   </div>
                 </div>
 
-                {/* 3. Assign Role & physical Branch */}
+                {/* 3. Assign Role & physical Site */}
                 <div className="space-y-4">
                   <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-50 pb-1.5">Company Assignments</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -809,7 +807,7 @@ export default function SupplierStaffPage() {
                       <label className="text-xs font-bold text-slate-700 ml-0.5">Select Role Profile *</label>
                       <select
                         {...register("role")}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none cursor-pointer"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-jungle-500/20 transition-all outline-none cursor-pointer"
                       >
                         <option value="">-- Choose Role --</option>
                         {roles.map(r => (
@@ -820,14 +818,14 @@ export default function SupplierStaffPage() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-700 ml-0.5">Assign Branch (Optional)</label>
+                      <label className="text-xs font-bold text-slate-700 ml-0.5">Assign Site (Optional)</label>
                       <select
-                        {...register("branch")}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none cursor-pointer"
+                        {...register("site")}
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-jungle-500/20 transition-all outline-none cursor-pointer"
                       >
                         <option value="">-- None / Head Office --</option>
-                        {branches.map(b => (
-                          <option key={b.reference} value={b.identity}>{b.name}</option>
+                        {sites.map(s => (
+                          <option key={s.reference} value={s.identity}>{s.name}</option>
                         ))}
                       </select>
                     </div>
@@ -850,7 +848,7 @@ export default function SupplierStaffPage() {
                 type="submit"
                 form="invite-form"
                 disabled={inviteMutation.isPending || editMutation.isPending}
-                className="flex-1 py-3 bg-suppblue-600 hover:bg-suppblue-700 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-70 shadow-sm text-xs"
+                className="flex-1 py-3 bg-jungle-600 hover:bg-jungle-700 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-70 shadow-sm text-xs"
               >
                 {inviteMutation.isPending || editMutation.isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

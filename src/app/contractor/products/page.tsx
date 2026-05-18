@@ -7,13 +7,13 @@ import { Plus, Package, Search, Filter, Loader2, ChevronLeft, ChevronRight } fro
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
-export default function SupplierProductsPage() {
+export default function ContractorProductsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [page, setPage] = useState(1)
 
-  // Fetch Supplier Products with backend pagination & search
+  // Fetch Contractor Products with backend pagination & search
   const { data, isLoading } = useQuery({
-    queryKey: ["supplier-products", searchQuery, page],
+    queryKey: ["contractor-products", searchQuery, page],
     queryFn: async () => {
       const response = await api.get("/api/v1/products/", {
         params: {
@@ -46,8 +46,8 @@ export default function SupplierProductsPage() {
           <p className="text-slate-500">Manage and track your products listed on the marketplace.</p>
         </div>
         <Link
-          href="/supplier/products/new"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-suppblue-700 hover:bg-suppblue-800 text-white rounded-xl font-bold transition-all shadow-lg shadow-suppblue-700/20"
+          href="/contractor/products/new"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-jungle-700 hover:bg-jungle-800 text-white rounded-xl font-bold transition-all shadow-lg shadow-jungle-700/20"
         >
           <Plus className="w-5 h-5" />
           Add Product
@@ -64,7 +64,7 @@ export default function SupplierProductsPage() {
               value={searchQuery}
               onChange={handleSearchChange}
               placeholder="Search products by name or SKU..."
-              className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-suppblue-500/10 transition-all"
+              className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-jungle-500/10 transition-all"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -105,14 +105,14 @@ export default function SupplierProductsPage() {
                 <tr key={product.reference} className="hover:bg-slate-50 transition-colors group text-sm">
                   <td className="px-6 py-4">
                     <Link 
-                      href={`/supplier/products/${product.reference}`} 
-                      className="flex items-center gap-3 group-hover:text-suppblue-600 transition-colors"
+                      href={`/contractor/products/${product.reference}`} 
+                      className="flex items-center gap-3 group-hover:text-jungle-600 transition-colors"
                     >
-                      <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:bg-suppblue-50 group-hover:text-suppblue-600 transition-colors">
+                      <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:bg-jungle-50 group-hover:text-jungle-600 transition-colors">
                         <Package className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="font-bold text-slate-900 group-hover:text-suppblue-600 transition-colors">{product.product_name}</p>
+                        <p className="font-bold text-slate-900 group-hover:text-jungle-600 transition-colors">{product.product_name}</p>
                         <p className="text-[10px] text-slate-400 uppercase tracking-tighter">REF: {product.reference}</p>
                       </div>
                     </Link>
@@ -131,8 +131,8 @@ export default function SupplierProductsPage() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <Link 
-                      href={`/supplier/products/${product.reference}`}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-suppblue-700 bg-suppblue-50 hover:bg-suppblue-100 rounded-xl transition-all"
+                      href={`/contractor/products/${product.reference}`}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-jungle-700 bg-jungle-50 hover:bg-jungle-100 rounded-xl transition-all"
                     >
                       Inspect &rarr;
                     </Link>
