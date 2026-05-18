@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
@@ -24,7 +24,10 @@ import {
   Link,
   Unlink,
   Pencil,
-  Trash2
+  Trash2,
+  Search,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react"
 import toast from "react-hot-toast"
 import { cn } from "@/lib/utils"
@@ -100,8 +103,13 @@ export default function SupplierStaffPage() {
   const [assigningEmployee, setAssigningEmployee] = useState<EmployeeUser | null>(null)
   const [editingEmployee, setEditingEmployee] = useState<EmployeeUser | null>(null)
   
+  // Local states for frontend pagination & search
+  const [searchQuery, setSearchQuery] = useState("")
+  const [page, setPage] = useState(1)
+  const ITEMS_PER_PAGE = 5
+
   // React Hook Form for employee invitation
-  const { register, handleSubmit, reset, control, formState: { errors } } = useForm<InviteValues>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<InviteValues>({
     resolver: zodResolver(inviteSchema),
     defaultValues: {
       first_name: "",
@@ -159,7 +167,6 @@ export default function SupplierStaffPage() {
   // 1. Post New Employee Invitation
   const inviteMutation = useMutation({
     mutationFn: async (data: InviteValues) => {
-      // API expects company slug identity
       return api.post("/api/v1/auth/add/employee/", {
         ...data,
         company: company?.identity,
@@ -314,10 +321,34 @@ export default function SupplierStaffPage() {
     })
   }
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+    setPage(1)
+  }
+
   // Lookup helper lists
-  const employees = employeesData || []
+  const rawStaff = employeesData || []
   const roles = rolesData || []
   const branches = branchesData || []
+
+  // Perform Local Search & Filtering
+  const filteredStaff = rawStaff.filter((emp: EmployeeUser) =>
+    `${emp.first_name} ${emp.last_name}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    emp.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    emp.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (emp.phone && emp.phone.includes(searchQuery))
+  )
+
+  // Perform Local Pagination
+  const totalCount = filteredStaff.length
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE) || 1
+  const paginatedStaff = filteredStaff.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  )
+
+  const hasNext = page < totalPages
+  const hasPrevious = page > 1
 
   return (
     <div className="p-4 sm:p-8 container mx-auto space-y-8 pb-24">
@@ -341,7 +372,7 @@ export default function SupplierStaffPage() {
         <div className="flex items-center justify-center min-h-[300px]">
           <Loader2 className="w-8 h-8 animate-spin text-suppblue-600" />
         </div>
-      ) : employees.length === 0 ? (
+      ) : rawStaff.length === 0 ? (
         <div className="bg-white border border-dashed border-slate-300 rounded-3xl p-16 text-center space-y-4">
           <div className="w-16 h-16 bg-suppblue-50 text-suppblue-600 rounded-full flex items-center justify-center mx-auto">
             <Users className="w-8 h-8" />
@@ -359,8 +390,28 @@ export default function SupplierStaffPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+            
+            {/* Table Header & Local Search */}
+            <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-50/50">
+              <div className="relative w-full md:w-96">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  placeholder="Search staff by name, email or username..."
+                  className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-suppblue-500/10 transition-all"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
+                  Frontend Filter: active
+                </span>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto flex-1">
               <table className="w-full text-left text-sm">
                 <thead className="bg-slate-50/50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider text-xs">
                   <tr>
@@ -372,10 +423,9 @@ export default function SupplierStaffPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {employees.map((employee: EmployeeUser) => {
+                  {paginatedStaff.map((employee: EmployeeUser) => {
                     const employment = employee.employment?.[0]
                     const employeeRoleIdentity = employment?.role
-                    // Find actual Role metadata for display
                     const matchedRole = roles.find(r => r.identity === employeeRoleIdentity)
 
                     return (
@@ -410,8 +460,8 @@ export default function SupplierStaffPage() {
                             <div>
                               {matchedRole?.is_head ? (
                                 <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 uppercase tracking-wide">
-                                  <UserCheck className="w-3 h-3" />
-                                  Head of Department
+                                  <UserCheck className="w-3.5 h-3.5" />
+                                  Head of Branch
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100 uppercase tracking-wide">
@@ -515,6 +565,46 @@ export default function SupplierStaffPage() {
                 </tbody>
               </table>
             </div>
+
+            {!isLoadingStaff && paginatedStaff.length === 0 && (
+              <div className="p-16 text-center space-y-4">
+                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto">
+                  <Users className="w-8 h-8 text-slate-300" />
+                </div>
+                <p className="text-slate-500 font-bold">No employee records match your search keyword.</p>
+              </div>
+            )}
+
+            {/* Local Pagination Footer Controls */}
+            {totalCount > 0 && (
+              <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50 text-xs text-slate-500 font-bold shrink-0">
+                <div>
+                  Showing {Math.min(totalCount, (page - 1) * ITEMS_PER_PAGE + 1)} to{" "}
+                  {Math.min(totalCount, page * ITEMS_PER_PAGE)} of {totalCount} total entries
+                </div>
+                {totalPages > 1 && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setPage(p => Math.max(1, p - 1))}
+                      disabled={!hasPrevious}
+                      className="p-2 border border-slate-200 bg-white hover:bg-slate-50 rounded-lg disabled:opacity-50 transition-colors flex items-center justify-center"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <span className="px-3 py-1.5 border border-slate-200 bg-white rounded-lg">
+                      Page {page} of {totalPages}
+                    </span>
+                    <button
+                      onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                      disabled={!hasNext}
+                      className="p-2 border border-slate-200 bg-white hover:bg-slate-50 rounded-lg disabled:opacity-50 transition-colors flex items-center justify-center"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -705,7 +795,7 @@ export default function SupplierStaffPage() {
                       <input
                         {...register("location")}
                         className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none"
-                        placeholder="e.g. Nairobi Head Office"
+                        placeholder="e.g. Mombasa Central"
                       />
                     </div>
                   </div>

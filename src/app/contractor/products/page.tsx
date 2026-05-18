@@ -1,19 +1,42 @@
 "use client"
 
+import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import api from "@/lib/api"
-import { Plus, Package, Search, Filter, MoreVertical, Edit, Trash2, Loader2 } from "lucide-react"
+import { Plus, Package, Search, Filter, Loader2, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
 export default function ContractorProductsPage() {
-  const { data: products, isLoading } = useQuery({
-    queryKey: ["contractor-products"],
+  const [searchQuery, setSearchQuery] = useState("")
+  const [page, setPage] = useState(1)
+
+  // Fetch Contractor Products with backend pagination & search
+  const { data, isLoading } = useQuery({
+    queryKey: ["contractor-products", searchQuery, page],
     queryFn: async () => {
-      const response = await api.get("/api/v1/products/")
-      return response.data.results
+      const response = await api.get("/api/v1/products/", {
+        params: {
+          search: searchQuery || undefined,
+          page: page
+        }
+      })
+      return response.data
     }
   })
+
+  // Extract pagination details from backend response
+  const products = data?.results || data || []
+  const totalCount = data?.count || products.length
+  const hasNext = !!data?.next
+  const hasPrevious = !!data?.previous
+  const itemsPerPage = 100 // Backend default PAGE_SIZE
+  const totalPages = Math.ceil(totalCount / itemsPerPage) || 1
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+    setPage(1) // Reset to first page on search
+  }
 
   return (
     <div className="p-8 space-y-8">
@@ -31,27 +54,28 @@ export default function ContractorProductsPage() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
         {/* Table Header / Filters */}
         <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-50/50">
           <div className="relative w-full md:w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search products..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Search products by name or SKU..."
               className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-jungle-500/10 transition-all"
             />
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50">
-              <Filter className="w-4 h-4" />
-              Filter
-            </button>
+            <span className="text-xs font-bold text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
+              Backend Filter: active
+            </span>
           </div>
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto flex-1">
           <table className="w-full text-left">
             <thead>
               <tr className="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
@@ -59,14 +83,14 @@ export default function ContractorProductsPage() {
                 <th className="px-6 py-4">Stock</th>
                 <th className="px-6 py-4">Price</th>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Actions</th>
+                <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {isLoading ? (
                 [1, 2, 3].map((i) => (
                   <tr key={i} className="animate-pulse">
-                    <td colSpan={6} className="px-6 py-8">
+                    <td colSpan={5} className="px-6 py-8">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 bg-slate-100 rounded-lg" />
                         <div className="space-y-2">
@@ -105,13 +129,12 @@ export default function ContractorProductsPage() {
                       Active
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 text-right">
                     <Link 
                       href={`/contractor/products/${product.reference}`}
                       className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-jungle-700 bg-jungle-50 hover:bg-jungle-100 rounded-xl transition-all"
                     >
-                      <Edit className="w-3.5 h-3.5" />
-                      Manage
+                      Inspect &rarr;
                     </Link>
                   </td>
                 </tr>
@@ -126,15 +149,45 @@ export default function ContractorProductsPage() {
               <Package className="w-8 h-8 text-slate-200" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-900">No products yet</h3>
-              <p className="text-slate-500">List your first product to start selling on SUPPCO.</p>
+              <h3 className="text-lg font-bold text-slate-900">No products match search criteria</h3>
+              <p className="text-slate-500">List new products or try another keyword in the search bar.</p>
             </div>
-            <Link
-              href="/contractor/products/new"
+            <button
+              onClick={() => { setSearchQuery(""); setPage(1); }}
               className="inline-flex items-center gap-2 px-6 py-2 bg-slate-900 text-white rounded-lg text-sm font-bold"
             >
-              Get Started
-            </Link>
+              Reset Search
+            </button>
+          </div>
+        )}
+
+        {/* Backend Pagination Footer Controls */}
+        {totalCount > 0 && (
+          <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50 text-xs text-slate-500 font-bold shrink-0">
+            <div>
+              Showing {products.length} of {totalCount} total catalog entries
+            </div>
+            {(hasPrevious || hasNext) && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={!hasPrevious}
+                  className="p-2 border border-slate-200 bg-white hover:bg-slate-50 rounded-lg disabled:opacity-50 transition-colors flex items-center justify-center"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="px-3 py-1.5 border border-slate-200 bg-white rounded-lg">
+                  Page {page} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setPage(p => p + 1)}
+                  disabled={!hasNext}
+                  className="p-2 border border-slate-200 bg-white hover:bg-slate-50 rounded-lg disabled:opacity-50 transition-colors flex items-center justify-center"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

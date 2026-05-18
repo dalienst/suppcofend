@@ -8,18 +8,18 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import api from "@/lib/api"
 import Link from "next/link"
 import { 
-  Building2, 
   MapPin, 
   Loader2, 
-  CheckCircle2, 
   AlertCircle,
   Plus,
-  MoreVertical,
   Edit2,
   Trash2,
   X,
   ExternalLink,
-  Warehouse
+  Warehouse,
+  Search,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react"
 
 // Types
@@ -47,6 +47,11 @@ export default function ContractorSitesPage() {
   const [editingSite, setEditingSite] = useState<Site | null>(null)
   const [deletingSite, setDeletingSite] = useState<Site | null>(null)
   
+  // Local states for frontend pagination & search
+  const [searchQuery, setSearchQuery] = useState("")
+  const [page, setPage] = useState(1)
+  const ITEMS_PER_PAGE = 5
+
   // Form Setup
   const { register, handleSubmit, reset, formState: { errors } } = useForm<SiteValues>({
     resolver: zodResolver(siteSchema),
@@ -115,7 +120,29 @@ export default function ContractorSitesPage() {
     saveMutation.mutate(data)
   }
 
-  const sites = sitesData || []
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+    setPage(1) // Reset to page 1 on filter
+  }
+
+  const rawSites = sitesData || []
+
+  // Perform Local Search & Filtering
+  const filteredSites = rawSites.filter((site: Site) =>
+    site.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (site.address && site.address.toLowerCase().includes(searchQuery.toLowerCase()))
+  )
+
+  // Perform Local Pagination
+  const totalCount = filteredSites.length
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE) || 1
+  const paginatedSites = filteredSites.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  )
+
+  const hasNext = page < totalPages
+  const hasPrevious = page > 1
 
   return (
     <div className="p-4 mx-auto space-y-8 animate-in fade-in-50 duration-300">
@@ -137,7 +164,7 @@ export default function ContractorSitesPage() {
         <div className="flex items-center justify-center min-h-[300px]">
           <Loader2 className="w-8 h-8 animate-spin text-jungle-600" />
         </div>
-      ) : sites.length === 0 ? (
+      ) : rawSites.length === 0 ? (
         <div className="bg-white border border-dashed border-slate-300 rounded-3xl p-12 text-center space-y-4 shadow-sm">
           <div className="w-16 h-16 bg-jungle-50 text-jungle-600 rounded-full flex items-center justify-center mx-auto">
             <Warehouse className="w-8 h-8" />
@@ -154,8 +181,28 @@ export default function ContractorSitesPage() {
           </button>
         </div>
       ) : (
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+          {/* Table Header / Local Search Bar */}
+          <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-50/50">
+            <div className="relative w-full md:w-96">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                placeholder="Search sites by name or location..."
+                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-jungle-500/10 transition-all"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
+                Frontend Filter: active
+              </span>
+            </div>
+          </div>
+
+          {/* Table */}
+          <div className="overflow-x-auto flex-1">
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50/50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider text-xs">
                 <tr>
@@ -167,7 +214,7 @@ export default function ContractorSitesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {sites.map((site: Site) => (
+                {paginatedSites.map((site: Site) => (
                   <tr key={site.reference} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="px-6 py-4">
                       <Link href={`/contractor/sites/${site.reference}`} className="flex items-center gap-3 group/link hover:opacity-95">
@@ -215,6 +262,46 @@ export default function ContractorSitesPage() {
               </tbody>
             </table>
           </div>
+
+          {!isLoading && paginatedSites.length === 0 && (
+            <div className="p-16 text-center space-y-4">
+              <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto">
+                <Warehouse className="w-8 h-8 text-slate-300" />
+              </div>
+              <p className="text-slate-500 font-bold">No physical sites match your search keyword.</p>
+            </div>
+          )}
+
+          {/* Local Pagination Footer Controls */}
+          {totalCount > 0 && (
+            <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50 text-xs text-slate-500 font-bold shrink-0">
+              <div>
+                Showing {Math.min(totalCount, (page - 1) * ITEMS_PER_PAGE + 1)} to{" "}
+                {Math.min(totalCount, page * ITEMS_PER_PAGE)} of {totalCount} total entries
+              </div>
+              {totalPages > 1 && (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={!hasPrevious}
+                    className="p-2 border border-slate-200 bg-white hover:bg-slate-50 rounded-lg disabled:opacity-50 transition-colors flex items-center justify-center"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <span className="px-3 py-1.5 border border-slate-200 bg-white rounded-lg">
+                    Page {page} of {totalPages}
+                  </span>
+                  <button
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                    disabled={!hasNext}
+                    className="p-2 border border-slate-200 bg-white hover:bg-slate-50 rounded-lg disabled:opacity-50 transition-colors flex items-center justify-center"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
