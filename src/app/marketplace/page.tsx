@@ -123,7 +123,7 @@ export default function MarketplacePage() {
               >
                 <span>All Suppliers</span>
               </button>
-              {uniqueSuppliers.map((supplier) => (
+              {uniqueSuppliers.map((supplier: any) => (
                 <button
                   key={supplier.reference}
                   onClick={() => setSelectedSupplier(supplier.reference)}
@@ -244,7 +244,7 @@ export default function MarketplacePage() {
                   >
                     All Suppliers
                   </button>
-                  {uniqueSuppliers.map((supplier) => (
+                   {uniqueSuppliers.map((supplier: any) => (
                     <button
                       key={supplier.reference}
                       onClick={() => setSelectedSupplier(supplier.reference)}
