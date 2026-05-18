@@ -27,6 +27,7 @@ import {
   Edit2
 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import toast from "react-hot-toast"
 
 interface OrderItem {
   reference: string
@@ -121,13 +122,17 @@ export default function SupplierOrdersPage() {
     },
     onSuccess: (updatedOrder) => {
       queryClient.invalidateQueries({ queryKey: ["supplier-orders"] })
+      queryClient.invalidateQueries({ queryKey: ["supplier-orders-dashboard"] })
       // Keep selected order in drawer fresh
       setSelectedOrder(updatedOrder)
       setSaveSuccess(true)
+      toast.success("Shipment parameters updated successfully!")
       setTimeout(() => setSaveSuccess(false), 3000)
     },
     onError: (err: any) => {
-      setSaveError(err.response?.data?.error || "Failed to update order tracking details.")
+      const errMsg = err.response?.data?.error || "Failed to update order tracking details."
+      setSaveError(errMsg)
+      toast.error(errMsg)
     }
   })
 
