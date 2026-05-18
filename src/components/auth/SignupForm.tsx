@@ -34,10 +34,10 @@ export function SignupForm({ role }: SignupFormProps) {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
 
-  const { 
-    register, 
-    handleSubmit, 
-    formState: { errors } 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
   } = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
   })
@@ -65,13 +65,13 @@ export function SignupForm({ role }: SignupFormProps) {
         <div className={cn("w-20 h-20 mx-auto rounded-full flex items-center justify-center", `bg-${themeColor}-100 text-${themeColor}-600`)}>
           <BadgeCheck className="w-12 h-12" />
         </div>
-        <h2 className="text-3xl font-extrabold text-slate-900">Verify Your Email</h2>
+        <h2 className="text-3xl font-bold text-slate-900">Verify Your Email</h2>
         <p className="text-slate-500 max-w-sm mx-auto">
           We've sent a verification link to your email. Please check your inbox and click the link to activate your account.
         </p>
-        <Link 
+        <Link
           href="/login"
-          className={cn("inline-flex items-center gap-2 px-8 py-3 rounded-xl font-bold text-white transition-all", `bg-${themeColor}-700 hover:bg-${themeColor}-800 shadow-lg shadow-${themeColor}-700/20`)}
+          className={cn("inline-flex items-center gap-2 px-8 py-3 rounded-xl font-semibold text-white transition-all", `bg-${themeColor}-700 hover:bg-${themeColor}-800 shadow-lg shadow-${themeColor}-700/20`)}
         >
           Go to Login <ArrowRight className="w-5 h-5" />
         </Link>
@@ -91,8 +91,8 @@ export function SignupForm({ role }: SignupFormProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Personal Info */}
         <div className="space-y-4">
-          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest px-1">Identity</h3>
-          
+          <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-widest px-1">Identity</h3>
+
           <div className="space-y-2">
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -146,7 +146,7 @@ export function SignupForm({ role }: SignupFormProps) {
 
         {/* Business Info */}
         <div className="space-y-4">
-          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest px-1">Compliance & Reach</h3>
+          <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-widest px-1">Compliance & Reach</h3>
 
           <div className="space-y-2">
             <div className="relative">
@@ -199,9 +199,9 @@ export function SignupForm({ role }: SignupFormProps) {
         type="submit"
         disabled={isLoading}
         className={cn(
-          "w-full py-4 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg",
-          role === "contractor" 
-            ? "bg-jungle-700 hover:bg-jungle-800 shadow-jungle-700/20" 
+          "w-full py-4 text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-all shadow-lg",
+          role === "contractor"
+            ? "bg-jungle-700 hover:bg-jungle-800 shadow-jungle-700/20"
             : "bg-suppblue-700 hover:bg-suppblue-800 shadow-suppblue-700/20",
           "disabled:opacity-50"
         )}
@@ -218,7 +218,7 @@ export function SignupForm({ role }: SignupFormProps) {
 
       <p className="text-center text-sm text-slate-500">
         Already have an account?{" "}
-        <Link href="/login" className="font-bold text-slate-900 hover:underline">
+        <Link href="/login" className="font-semibold text-slate-900 hover:underline">
           Sign In
         </Link>
       </p>

@@ -5,15 +5,15 @@ import { useParams, useRouter } from "next/navigation"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import api from "@/lib/api"
 import Link from "next/link"
-import { 
-  Building2, 
-  MapPin, 
-  Users, 
-  ShoppingBag, 
-  ArrowLeft, 
-  Loader2, 
-  Mail, 
-  Phone, 
+import {
+  Building2,
+  MapPin,
+  Users,
+  ShoppingBag,
+  ArrowLeft,
+  Loader2,
+  Mail,
+  Phone,
   ShieldAlert,
   User,
   Calendar,
@@ -63,7 +63,7 @@ export default function SupplierBranchDetailPage() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const reference = params?.reference as string
-  
+
   const [activeTab, setActiveTab] = useState<"staff" | "products">("staff")
 
   // Fetch Full Branch Details from API
@@ -81,7 +81,7 @@ export default function SupplierBranchDetailPage() {
       <div className="flex items-center justify-center min-h-[500px]">
         <div className="text-center space-y-3">
           <Loader2 className="w-10 h-10 animate-spin text-suppblue-600 mx-auto" />
-          <p className="text-slate-500 text-xs font-bold">Resolving physical branch coordinates...</p>
+          <p className="text-slate-500 text-xs font-semibold">Resolving physical branch coordinates...</p>
         </div>
       </div>
     )
@@ -91,13 +91,13 @@ export default function SupplierBranchDetailPage() {
     return (
       <div className="max-w-md mx-auto my-12 text-center p-8 bg-white border border-slate-200 rounded-3xl space-y-4 shadow-sm">
         <ShieldAlert className="w-12 h-12 text-red-500 mx-auto animate-bounce" />
-        <h2 className="text-lg font-black text-slate-900">Branch Coordinates Lost</h2>
+        <h2 className="text-lg font-bold text-slate-900">Branch Coordinates Lost</h2>
         <p className="text-slate-500 text-xs leading-relaxed">
           The physical branch requested was not found or has been decommissioned from active company logistics.
         </p>
         <button
           onClick={() => router.push("/supplier/branches")}
-          className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all flex items-center gap-2 mx-auto"
+          className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 mx-auto"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Directory
@@ -108,12 +108,12 @@ export default function SupplierBranchDetailPage() {
 
   return (
     <div className="p-4 mx-auto space-y-8 animate-in fade-in-50 duration-300">
-      
+
       {/* 1. Header & Navigation Back */}
       <div className="space-y-4">
-        <Link 
+        <Link
           href="/supplier/branches"
-          className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-suppblue-600 transition-colors bg-white hover:bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-suppblue-600 transition-colors bg-white hover:bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           Back to Branch Directory
@@ -126,8 +126,8 @@ export default function SupplierBranchDetailPage() {
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight">{branch.name}</h1>
-                <span className="bg-suppblue-50 text-suppblue-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-suppblue-100 uppercase tracking-wider shrink-0 mt-1">
+                <h1 className="text-3xl font-bold text-slate-900 tracking-tight">{branch.name}</h1>
+                <span className="bg-suppblue-50 text-suppblue-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-suppblue-100 uppercase tracking-wider shrink-0 mt-1">
                   Active Coordinates
                 </span>
               </div>
@@ -143,7 +143,7 @@ export default function SupplierBranchDetailPage() {
               <Calendar className="w-3.5 h-3.5" />
               <span>Registered On:</span>
             </div>
-            <div className="font-bold text-slate-800">
+            <div className="font-semibold text-slate-800">
               {new Date(branch.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
             </div>
           </div>
@@ -158,10 +158,10 @@ export default function SupplierBranchDetailPage() {
             <UserCheck className="w-6 h-6" />
           </div>
           <div className="space-y-1.5 overflow-hidden">
-            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Branch Manager / Head</p>
+            <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Branch Manager / Head</p>
             {branch.head_details ? (
               <div>
-                <h3 className="font-black text-slate-900 truncate">
+                <h3 className="font-bold text-slate-900 truncate">
                   {branch.head_details.first_name} {branch.head_details.last_name}
                 </h3>
                 <p className="text-slate-500 text-xs font-medium mt-0.5 truncate flex items-center gap-1">
@@ -171,10 +171,10 @@ export default function SupplierBranchDetailPage() {
               </div>
             ) : (
               <div>
-                <h3 className="font-black text-slate-500 text-sm italic">Unassigned</h3>
+                <h3 className="font-bold text-slate-500 text-sm italic">Unassigned</h3>
                 <Link
                   href="/supplier/staff"
-                  className="text-indigo-600 font-bold hover:underline text-[11px] mt-0.5 inline-block"
+                  className="text-indigo-600 font-semibold hover:underline text-[11px] mt-0.5 inline-block"
                 >
                   Assign branch manager →
                 </Link>
@@ -189,8 +189,8 @@ export default function SupplierBranchDetailPage() {
             <Users className="w-6 h-6" />
           </div>
           <div className="space-y-1">
-            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Allocated Personnel</p>
-            <h3 className="font-black text-slate-900 text-2xl tracking-tight">
+            <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Allocated Personnel</p>
+            <h3 className="font-bold text-slate-900 text-2xl tracking-tight">
               {branch.assigned_staff.length}
             </h3>
             <p className="text-slate-500 text-[11px] font-medium">
@@ -205,8 +205,8 @@ export default function SupplierBranchDetailPage() {
             <ShoppingBag className="w-6 h-6" />
           </div>
           <div className="space-y-1">
-            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Stocked Products</p>
-            <h3 className="font-black text-slate-900 text-2xl tracking-tight">
+            <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Stocked Products</p>
+            <h3 className="font-bold text-slate-900 text-2xl tracking-tight">
               {branch.branch_products.length}
             </h3>
             <p className="text-slate-500 text-[11px] font-medium">
@@ -223,7 +223,7 @@ export default function SupplierBranchDetailPage() {
           <button
             onClick={() => setActiveTab("staff")}
             className={cn(
-              "flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-bold transition-all shadow-sm",
+              "flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-semibold transition-all shadow-sm",
               activeTab === "staff"
                 ? "bg-white text-slate-900 border border-slate-100"
                 : "text-slate-500 hover:text-slate-800 hover:bg-white/50 border border-transparent shadow-none"
@@ -235,7 +235,7 @@ export default function SupplierBranchDetailPage() {
           <button
             onClick={() => setActiveTab("products")}
             className={cn(
-              "flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-bold transition-all shadow-sm",
+              "flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-semibold transition-all shadow-sm",
               activeTab === "products"
                 ? "bg-white text-slate-900 border border-slate-100"
                 : "text-slate-500 hover:text-slate-800 hover:bg-white/50 border border-transparent shadow-none"
@@ -255,14 +255,14 @@ export default function SupplierBranchDetailPage() {
                   <Users className="w-8 h-8" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800">No Workers assigned</h3>
+                  <h3 className="font-semibold text-slate-800">No Workers assigned</h3>
                   <p className="text-slate-500 text-xs mt-1 leading-relaxed">
                     Physical operations require assigned workers. Reallocate employee base locations in the staff cockpit.
                   </p>
                 </div>
                 <Link
                   href="/supplier/staff"
-                  className="inline-flex items-center gap-2 text-xs font-bold text-suppblue-700 hover:underline mx-auto"
+                  className="inline-flex items-center gap-2 text-xs font-semibold text-suppblue-700 hover:underline mx-auto"
                 >
                   <Sparkles className="w-4 h-4" />
                   Manage Staff Assignments
@@ -271,7 +271,7 @@ export default function SupplierBranchDetailPage() {
             ) : (
               <div className="overflow-x-auto rounded-2xl border border-slate-100">
                 <table className="w-full text-left text-xs border-collapse">
-                  <thead className="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
+                  <thead className="bg-slate-50 border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider">
                     <tr>
                       <th className="px-6 py-3.5">Name</th>
                       <th className="px-6 py-3.5">Username</th>
@@ -283,7 +283,7 @@ export default function SupplierBranchDetailPage() {
                   <tbody className="divide-y divide-slate-50">
                     {branch.assigned_staff.map((staff) => (
                       <tr key={staff.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4 font-bold text-slate-900">
+                        <td className="px-6 py-4 font-semibold text-slate-900">
                           {staff.first_name} {staff.last_name}
                         </td>
                         <td className="px-6 py-4 text-slate-500 font-mono">
@@ -291,7 +291,7 @@ export default function SupplierBranchDetailPage() {
                         </td>
                         <td className="px-6 py-4">
                           <span className={cn(
-                            "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase border",
+                            "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold uppercase border",
                             staff.role_name?.toLowerCase().includes("head") || staff.role_name?.toLowerCase().includes("manager")
                               ? "bg-indigo-50 border-indigo-100 text-indigo-700"
                               : "bg-slate-50 border-slate-100 text-slate-600"
@@ -333,14 +333,14 @@ export default function SupplierBranchDetailPage() {
                   <ShoppingBag className="w-8 h-8" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800">Branch Stock Empty</h3>
+                  <h3 className="font-semibold text-slate-800">Branch Stock Empty</h3>
                   <p className="text-slate-500 text-xs mt-1 leading-relaxed">
                     There are currently no catalog products stocked at this physical location.
                   </p>
                 </div>
                 <Link
                   href="/supplier/products"
-                  className="inline-flex items-center gap-2 text-xs font-bold text-suppblue-700 hover:underline mx-auto"
+                  className="inline-flex items-center gap-2 text-xs font-semibold text-suppblue-700 hover:underline mx-auto"
                 >
                   <Sparkles className="w-4 h-4" />
                   View Catalogue Products
@@ -349,7 +349,7 @@ export default function SupplierBranchDetailPage() {
             ) : (
               <div className="overflow-x-auto rounded-2xl border border-slate-100">
                 <table className="w-full text-left text-xs border-collapse">
-                  <thead className="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
+                  <thead className="bg-slate-50 border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider">
                     <tr>
                       <th className="px-6 py-3.5">Product Name</th>
                       <th className="px-6 py-3.5">SKU Code</th>
@@ -361,7 +361,7 @@ export default function SupplierBranchDetailPage() {
                   <tbody className="divide-y divide-slate-50">
                     {branch.branch_products.map((product) => (
                       <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4 font-bold text-slate-900">
+                        <td className="px-6 py-4 font-semibold text-slate-900">
                           {product.name}
                         </td>
                         <td className="px-6 py-4 text-slate-600 font-mono">
@@ -376,7 +376,7 @@ export default function SupplierBranchDetailPage() {
                         <td className="px-6 py-4 text-right">
                           <Link
                             href={`/supplier/products/${product.reference}`}
-                            className="text-suppblue-700 hover:underline font-bold"
+                            className="text-suppblue-700 hover:underline font-semibold"
                           >
                             Inspect Product →
                           </Link>

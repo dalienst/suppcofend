@@ -5,15 +5,15 @@ import { useParams, useRouter } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
 import api from "@/lib/api"
 import Link from "next/link"
-import { 
-  Warehouse, 
-  MapPin, 
-  Users, 
-  ShoppingBag, 
-  ArrowLeft, 
-  Loader2, 
-  Mail, 
-  Phone, 
+import {
+  Warehouse,
+  MapPin,
+  Users,
+  ShoppingBag,
+  ArrowLeft,
+  Loader2,
+  Mail,
+  Phone,
   ShieldAlert,
   Calendar,
   Sparkles,
@@ -60,7 +60,7 @@ export default function ContractorSiteDetailPage() {
   const params = useParams()
   const router = useRouter()
   const reference = params?.reference as string
-  
+
   const [activeTab, setActiveTab] = useState<"staff" | "products">("staff")
 
   // Fetch Full Site Details from API
@@ -78,7 +78,7 @@ export default function ContractorSiteDetailPage() {
       <div className="flex items-center justify-center min-h-[500px]">
         <div className="text-center space-y-3">
           <Loader2 className="w-10 h-10 animate-spin text-jungle-600 mx-auto" />
-          <p className="text-slate-500 text-xs font-bold">Resolving physical site coordinates...</p>
+          <p className="text-slate-500 text-xs font-semibold">Resolving physical site coordinates...</p>
         </div>
       </div>
     )
@@ -88,13 +88,13 @@ export default function ContractorSiteDetailPage() {
     return (
       <div className="max-w-md mx-auto my-12 text-center p-8 bg-white border border-slate-200 rounded-3xl space-y-4 shadow-sm">
         <ShieldAlert className="w-12 h-12 text-red-500 mx-auto animate-bounce" />
-        <h2 className="text-lg font-black text-slate-900">Site Coordinates Lost</h2>
+        <h2 className="text-lg font-bold text-slate-900">Site Coordinates Lost</h2>
         <p className="text-slate-500 text-xs leading-relaxed">
           The physical site requested was not found or has been decommissioned from active company logistics.
         </p>
         <button
           onClick={() => router.push("/contractor/sites")}
-          className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all flex items-center gap-2 mx-auto"
+          className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-all flex items-center gap-2 mx-auto"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Directory
@@ -105,12 +105,12 @@ export default function ContractorSiteDetailPage() {
 
   return (
     <div className="p-4 mx-auto space-y-8 animate-in fade-in-50 duration-300">
-      
+
       {/* 1. Header & Navigation Back */}
       <div className="space-y-4">
-        <Link 
+        <Link
           href="/contractor/sites"
-          className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-jungle-600 transition-colors bg-white hover:bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-jungle-600 transition-colors bg-white hover:bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           Back to Site Directory
@@ -123,8 +123,8 @@ export default function ContractorSiteDetailPage() {
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight">{site.name}</h1>
-                <span className="bg-jungle-50 text-jungle-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-jungle-100 uppercase tracking-wider shrink-0 mt-1">
+                <h1 className="text-3xl font-bold text-slate-900 tracking-tight">{site.name}</h1>
+                <span className="bg-jungle-50 text-jungle-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-jungle-100 uppercase tracking-wider shrink-0 mt-1">
                   Active Footprint
                 </span>
               </div>
@@ -140,7 +140,7 @@ export default function ContractorSiteDetailPage() {
               <Calendar className="w-3.5 h-3.5" />
               <span>Registered On:</span>
             </div>
-            <div className="font-bold text-slate-800">
+            <div className="font-semibold text-slate-800">
               {new Date(site.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
             </div>
           </div>
@@ -155,10 +155,10 @@ export default function ContractorSiteDetailPage() {
             <UserCheck className="w-6 h-6" />
           </div>
           <div className="space-y-1.5 overflow-hidden">
-            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Site Manager / Head</p>
+            <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Site Manager / Head</p>
             {site.head_details ? (
               <div>
-                <h3 className="font-black text-slate-900 truncate">
+                <h3 className="font-bold text-slate-900 truncate">
                   {site.head_details.first_name} {site.head_details.last_name}
                 </h3>
                 <p className="text-slate-500 text-xs font-medium mt-0.5 truncate flex items-center gap-1">
@@ -168,10 +168,10 @@ export default function ContractorSiteDetailPage() {
               </div>
             ) : (
               <div>
-                <h3 className="font-black text-slate-500 text-sm italic">Unassigned</h3>
+                <h3 className="font-bold text-slate-500 text-sm italic">Unassigned</h3>
                 <Link
                   href="/contractor/staff"
-                  className="text-indigo-600 font-bold hover:underline text-[11px] mt-0.5 inline-block"
+                  className="text-indigo-600 font-semibold hover:underline text-[11px] mt-0.5 inline-block"
                 >
                   Assign site manager →
                 </Link>
@@ -186,8 +186,8 @@ export default function ContractorSiteDetailPage() {
             <Users className="w-6 h-6" />
           </div>
           <div className="space-y-1">
-            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Allocated Personnel</p>
-            <h3 className="font-black text-slate-900 text-2xl tracking-tight">
+            <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Allocated Personnel</p>
+            <h3 className="font-bold text-slate-900 text-2xl tracking-tight">
               {site.assigned_staff.length}
             </h3>
             <p className="text-slate-500 text-[11px] font-medium">
@@ -202,8 +202,8 @@ export default function ContractorSiteDetailPage() {
             <ShoppingBag className="w-6 h-6" />
           </div>
           <div className="space-y-1">
-            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Stocked Materials</p>
-            <h3 className="font-black text-slate-900 text-2xl tracking-tight">
+            <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">Stocked Materials</p>
+            <h3 className="font-bold text-slate-900 text-2xl tracking-tight">
               {site.site_products.length}
             </h3>
             <p className="text-slate-500 text-[11px] font-medium">
@@ -220,7 +220,7 @@ export default function ContractorSiteDetailPage() {
           <button
             onClick={() => setActiveTab("staff")}
             className={cn(
-              "flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-bold transition-all shadow-sm",
+              "flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-semibold transition-all shadow-sm",
               activeTab === "staff"
                 ? "bg-white text-slate-900 border border-slate-100"
                 : "text-slate-500 hover:text-slate-800 hover:bg-white/50 border border-transparent shadow-none"
@@ -232,7 +232,7 @@ export default function ContractorSiteDetailPage() {
           <button
             onClick={() => setActiveTab("products")}
             className={cn(
-              "flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-bold transition-all shadow-sm",
+              "flex items-center gap-2 px-5 py-3 rounded-2xl text-xs font-semibold transition-all shadow-sm",
               activeTab === "products"
                 ? "bg-white text-slate-900 border border-slate-100"
                 : "text-slate-500 hover:text-slate-800 hover:bg-white/50 border border-transparent shadow-none"
@@ -252,14 +252,14 @@ export default function ContractorSiteDetailPage() {
                   <Users className="w-8 h-8" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800">No Workers assigned</h3>
+                  <h3 className="font-semibold text-slate-800">No Workers assigned</h3>
                   <p className="text-slate-500 text-xs mt-1 leading-relaxed">
                     Physical operations require assigned workers. Reallocate employee base locations in the staff cockpit.
                   </p>
                 </div>
                 <Link
                   href="/contractor/staff"
-                  className="inline-flex items-center gap-2 text-xs font-bold text-jungle-700 hover:underline mx-auto"
+                  className="inline-flex items-center gap-2 text-xs font-semibold text-jungle-700 hover:underline mx-auto"
                 >
                   <Sparkles className="w-4 h-4" />
                   Manage Staff Assignments
@@ -268,7 +268,7 @@ export default function ContractorSiteDetailPage() {
             ) : (
               <div className="overflow-x-auto rounded-2xl border border-slate-100">
                 <table className="w-full text-left text-xs border-collapse">
-                  <thead className="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
+                  <thead className="bg-slate-50 border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider">
                     <tr>
                       <th className="px-6 py-3.5">Name</th>
                       <th className="px-6 py-3.5">Username</th>
@@ -278,9 +278,9 @@ export default function ContractorSiteDetailPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
-                    {site.assigned_staff.map((staff) => (
-                      <tr key={staff.reference} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4 font-bold text-slate-900">
+                    {site.assigned_staff.map((staff, index) => (
+                      <tr key={staff.id || staff.reference || `staff-${index}`} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-6 py-4 font-semibold text-slate-900">
                           {staff.first_name} {staff.last_name}
                         </td>
                         <td className="px-6 py-4 text-slate-500 font-mono">
@@ -288,7 +288,7 @@ export default function ContractorSiteDetailPage() {
                         </td>
                         <td className="px-6 py-4">
                           <span className={cn(
-                            "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase border",
+                            "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold uppercase border",
                             staff.role_name?.toLowerCase().includes("head") || staff.role_name?.toLowerCase().includes("manager")
                               ? "bg-indigo-50 border-indigo-100 text-indigo-700"
                               : "bg-slate-50 border-slate-100 text-slate-600"
@@ -330,14 +330,14 @@ export default function ContractorSiteDetailPage() {
                   <ShoppingBag className="w-8 h-8" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800">Site Stock Empty</h3>
+                  <h3 className="font-semibold text-slate-800">Site Stock Empty</h3>
                   <p className="text-slate-500 text-xs mt-1 leading-relaxed">
                     There are currently no catalog products stocked at this physical location.
                   </p>
                 </div>
                 <Link
                   href="/contractor/products"
-                  className="inline-flex items-center gap-2 text-xs font-bold text-jungle-700 hover:underline mx-auto"
+                  className="inline-flex items-center gap-2 text-xs font-semibold text-jungle-700 hover:underline mx-auto"
                 >
                   <Sparkles className="w-4 h-4" />
                   View Catalogue Products
@@ -346,7 +346,7 @@ export default function ContractorSiteDetailPage() {
             ) : (
               <div className="overflow-x-auto rounded-2xl border border-slate-100">
                 <table className="w-full text-left text-xs border-collapse">
-                  <thead className="bg-slate-50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
+                  <thead className="bg-slate-50 border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider">
                     <tr>
                       <th className="px-6 py-3.5">Product Name</th>
                       <th className="px-6 py-3.5">SKU Code</th>
@@ -356,9 +356,9 @@ export default function ContractorSiteDetailPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
-                    {site.site_products.map((product) => (
-                      <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4 font-bold text-slate-900">
+                    {site.site_products.map((product, index) => (
+                      <tr key={product.id || product.reference || `prod-${index}`} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="px-6 py-4 font-semibold text-slate-900">
                           {product.name}
                         </td>
                         <td className="px-6 py-4 text-slate-600 font-mono">
@@ -373,7 +373,7 @@ export default function ContractorSiteDetailPage() {
                         <td className="px-6 py-4 text-right">
                           <Link
                             href={`/contractor/products/${product.reference}`}
-                            className="text-jungle-700 hover:underline font-bold"
+                            className="text-jungle-700 hover:underline font-semibold"
                           >
                             Inspect Product →
                           </Link>

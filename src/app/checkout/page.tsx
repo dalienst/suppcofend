@@ -1,7 +1,6 @@
 "use client"
 
-import { useCartStore } from "@/lib/store"
-import { InstallmentProjector } from "@/components/payments/InstallmentProjector"
+import { useCartStore, CartItem } from "@/lib/store"
 import {
   ArrowLeft,
   ShieldCheck,
@@ -10,172 +9,390 @@ import {
   Package,
   ChevronRight,
   CheckCircle2,
-  Loader2
+  Building2,
+  Calendar,
+  AlertCircle
 } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useQuery } from "@tanstack/react-query"
+import api from "@/lib/api"
 
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCartStore()
   const router = useRouter()
   const [isProcessing, setIsProcessing] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [createdOrders, setCreatedOrders] = useState<any[] | null>(null)
+  const [isMounted, setIsMounted] = useState(false)
 
-  // Find if there's a flexible plan to project
-  const flexibleItem = items.find(item => item.paymentOptionName.toLowerCase().includes("flexible"))
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Fetch operational contractor sites from the database
+  const { data: sites } = useQuery({
+    queryKey: ["sites"],
+    queryFn: async () => {
+      const response = await api.get("/api/v1/sites/")
+      return response.data.results || response.data
+    }
+  })
+
+  const [selectedSite, setSelectedSite] = useState<string>("")
+  const [deliveryAddress, setDeliveryAddress] = useState<string>("")
+  const [selectedZoneRef, setSelectedZoneRef] = useState<string>("")
+
+  // Fetch delivery zones for the active supplier company
+  const supplierRef = items[0]?.company_reference
+  const { data: zones } = useQuery({
+    queryKey: ["delivery-zones", supplierRef],
+    queryFn: async () => {
+      if (!supplierRef) return []
+      const response = await api.get(`/api/v1/delivery/zones/?company=${supplierRef}`)
+      return response.data.results || response.data
+    },
+    enabled: !!supplierRef
+  })
+
+  const selectedZone = zones?.find((z: any) => z.reference === selectedZoneRef)
+  const logisticsFee = selectedZone ? Number(selectedZone.fee) : 0
+
+  // Calculate sum of initial required down payments (escrows)
+  const calculateTotalDownPayment = () => {
+    return items.reduce((acc: number, item: CartItem) => {
+      const itemTotal = item.price * item.quantity
+      if (item.payment_type === "PAYMENT_ON_DELIVERY") {
+        return acc + 0
+      }
+      if (item.payment_type === "SPLIT_50_50") {
+        return acc + (0.5 * itemTotal)
+      }
+      if (item.payment_type === "FLEXIBLE" && item.deposit_amount !== undefined) {
+        return acc + item.deposit_amount
+      }
+      return acc + itemTotal
+    }, 0)
+  }
+
+  // Check if any cart item has a flexible plan
+  const flexibleItem = items.find((item: CartItem) => item.deposit_amount !== undefined)
+
+  if (!isMounted) {
+    return (
+      <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-slate-900 border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
 
   const handlePlaceOrder = async () => {
     setIsProcessing(true)
-    // Simulate API call
-    setTimeout(() => {
-      setIsProcessing(false)
-      setIsSuccess(true)
+    setErrorMessage(null)
+
+    try {
+      // 1. Sync local Zustand cart with the backend database
+      // First, fetch existing backend cart items to clear them out
+      const existingRes = await api.get("/api/v1/cartitems/")
+      const existingItems = existingRes.data.results || existingRes.data
+
+      for (const item of existingItems) {
+        await api.delete(`/api/v1/cartitems/${item.reference}/`)
+      }
+
+      // Upload each frontend item to the backend database
+      for (const item of items) {
+        await api.post("/api/v1/cartitems/", {
+          product: item.reference,
+          quantity: item.quantity,
+          payment_option: item.paymentOptionReference,
+          deposit_amount: item.deposit_amount,
+          duration_months: item.duration_months,
+          monthly_amount: item.monthly_amount
+        })
+      }
+
+      // 2. Dispatch checkout call to split orders per supplier
+      const checkoutRes = await api.post("/api/v1/orders/checkout/", {
+        delivery_address: deliveryAddress,
+        delivery_zone: selectedZoneRef || null
+      })
+      const orderRefs = checkoutRes.data.map((ord: any) => ord.reference)
+
+      // 3. Initialize Paystack downpayment transaction
+      const paymentInitRes = await api.post("/api/v1/payments/initialize/", {
+        order_references: orderRefs
+      })
+
       clearCart()
-    }, 2000)
+
+      // Redirect contractor directly to Paystack's secure checkout gateway (supports Card + M-Pesa)
+      if (paymentInitRes.data?.authorization_url) {
+        window.location.href = paymentInitRes.data.authorization_url
+      } else {
+        // Fallback in case of response anomaly
+        setCreatedOrders(checkoutRes.data)
+      }
+    } catch (err: any) {
+      console.error(err)
+      setErrorMessage(
+        err.response?.data?.error ||
+        err.response?.data?.detail ||
+        "An unexpected error occurred during procurement validation. Please verify payment options & stock levels."
+      )
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
-  if (isSuccess) {
+  // Render Success Screen
+  if (createdOrders) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] p-8 text-center">
-        <div className="w-20 h-20 bg-jungle-100 rounded-full flex items-center justify-center mb-6 text-jungle-600">
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] p-8 max-w-2xl mx-auto text-center space-y-8 pb-24">
+        <div className="w-20 h-20 bg-jungle-100 rounded-full flex items-center justify-center mb-2 text-jungle-600 animate-bounce">
           <CheckCircle2 className="w-12 h-12" />
         </div>
-        <h1 className="text-3xl font-extrabold text-slate-900">Procurement Successful!</h1>
-        <p className="text-slate-500 mt-2 max-w-sm">
-          Your orders have been dispatched to the respective suppliers. You can track status in your dashboard.
-        </p>
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Procurement Confirmed!</h1>
+          <p className="text-slate-500 mt-2 text-sm max-w-md mx-auto leading-relaxed">
+            Your materials have been split and secured under individual supplier escrows. Payment holds will release upon delivery.
+          </p>
+        </div>
+
+        {/* Display created split orders */}
+        <div className="w-full bg-slate-50 border border-slate-200 rounded-3xl p-6 space-y-4 text-left shadow-sm">
+          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-widest border-b border-slate-200 pb-2">
+            Generated Split Orders ({createdOrders.length})
+          </h3>
+          <div className="divide-y divide-slate-200">
+            {createdOrders.map((ord: any) => (
+              <div key={ord.reference} className="py-3.5 flex justify-between items-center first:pt-0 last:pb-0">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Building2 className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span className="text-sm font-semibold text-slate-800">
+                      {ord.company_name || "Material Supplier"}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 font-mono font-medium">REF: {ord.reference.substring(0, 8).toUpperCase()}</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs px-2.5 py-1 rounded bg-slate-900 text-white font-mono font-semibold">
+                    KES {Number(ord.total_amount).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <Link
           href="/contractor/dashboard"
-          className="mt-8 px-8 py-3 bg-jungle-700 text-white rounded-xl font-bold hover:bg-jungle-800 transition-all shadow-lg shadow-jungle-700/20"
+          className="px-8 py-3.5 bg-jungle-700 hover:bg-jungle-800 text-white text-xs font-semibold rounded-xl shadow-lg shadow-jungle-700/20 uppercase tracking-wider transition-all"
         >
-          Go to Dashboard
+          Go to Procurement Ledger
         </Link>
       </div>
     )
   }
 
   return (
-    <div className="p-8  mx-auto">
-      <div className="flex items-center gap-4 mb-12">
+    <div className="p-8 mx-auto max-w-7xl pb-24 space-y-8">
+      {/* Header */}
+      <div className="flex items-center gap-4 border-b border-slate-100 pb-6">
         <button onClick={() => router.back()} className="p-2 hover:bg-white rounded-full border border-slate-100 text-slate-500">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-3xl font-extrabold text-slate-900">Finalize Procurement</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Finalize Procurement</h1>
+          <p className="text-slate-500 text-sm mt-1">Configure logistics details and confirm payment allocation.</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-        {/* Left Side: Projection and Items */}
-        <div className="space-y-10">
-          {flexibleItem ? (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 text-jungle-700">
-                <CreditCard className="w-5 h-5" />
-                <h2 className="text-lg font-bold">Flexible Payment Projection</h2>
-              </div>
-              <InstallmentProjector
-                totalAmount={flexibleItem.price * flexibleItem.quantity}
-                minDepositPercentage={20}
-                annualInterestRate={15}
-              />
-            </div>
-          ) : (
-            <div className="bg-white p-8 rounded-3xl border border-slate-200 space-y-6">
-              <h2 className="text-lg font-bold text-slate-900">Order Items</h2>
-              <div className="space-y-4">
-                {items.map(item => (
-                  <div key={`${item.reference}-${item.paymentOptionReference}`} className="flex items-center justify-between py-3 border-b border-slate-50">
+      {errorMessage && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-3xl flex gap-3 text-red-700">
+          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+          <p className="text-xs font-semibold">{errorMessage}</p>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+        {/* Left Column: Projections or Summary */}
+        <div className="space-y-8">
+
+          {/* Order items detail view */}
+          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 space-y-6 shadow-sm">
+            <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
+              <Package className="w-5 h-5 text-slate-700" />
+              Materials List ({items.length})
+            </h2>
+            <div className="divide-y divide-slate-100">
+              {items.map((item: CartItem) => {
+                return (
+                  <div key={`${item.reference}-${item.paymentOptionReference}`} className="py-4 flex items-center justify-between first:pt-0 last:pb-0">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center">
+                      <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 shrink-0">
                         <Package className="w-5 h-5 text-slate-300" />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-slate-900">{item.product_name}</p>
-                        <p className="text-[10px] text-slate-500 uppercase tracking-widest">{item.paymentOptionName}</p>
+                        <p className="text-xs font-bold text-slate-950">{item.product_name}</p>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">{item.paymentOptionName}</span>
+                          <span className="text-[10px] text-slate-300">|</span>
+                          <span className="text-[10px] text-slate-500">{item.quantity} {item.unit}</span>
+                        </div>
                       </div>
                     </div>
-                    <p className="text-sm font-bold text-slate-900">KES {(item.price * item.quantity).toLocaleString()}</p>
+                    <div className="text-right">
+                      <p className="text-xs font-mono font-bold text-slate-950">
+                        KES {(item.price * item.quantity).toLocaleString()}
+                      </p>
+                      {item.payment_type === "FLEXIBLE" && item.deposit_amount !== undefined && (
+                        <p className="text-[10px] text-jungle-750 font-semibold">
+                          Down Payment: KES {item.deposit_amount?.toLocaleString()}
+                        </p>
+                      )}
+                      {item.payment_type === "SPLIT_50_50" && (
+                        <p className="text-[10px] text-suppblue-600 font-semibold">
+                          50% Deposit: KES {(0.5 * item.price * item.quantity).toLocaleString()}
+                        </p>
+                      )}
+                      {item.payment_type === "PAYMENT_ON_DELIVERY" && (
+                        <p className="text-[10px] text-emerald-600 font-semibold">
+                          0% Down Payment
+                        </p>
+                      )}
+                    </div>
                   </div>
-                ))}
-              </div>
+                )
+              })}
             </div>
-          )}
+          </div>
 
-          <div className="bg-white p-8 rounded-3xl border border-slate-200 space-y-6">
-            <h2 className="text-lg font-bold text-slate-900">Delivery Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Delivery Configuration */}
+          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 space-y-6 shadow-sm">
+            <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
+              <Truck className="w-5 h-5 text-slate-700" />
+              Delivery Allocation
+            </h2>
+            <div className="flex flex-col gap-6">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Assign to Site</label>
-                <select className="w-full p-3 bg-slate-50 border border-slate-100 rounded-xl text-sm outline-none">
-                  <option>Main Project Site - Nairobi</option>
-                  <option>Secondary Site - Kiambu</option>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Assign to Project Site</label>
+                <select
+                  value={selectedSite}
+                  onChange={(e) => setSelectedSite(e.target.value)}
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold outline-none cursor-pointer text-slate-900"
+                >
+                  <option value="">Select Target Site...</option>
+                  {sites?.map((site: any) => (
+                    <option key={site.reference} value={site.name}>{site.name}</option>
+                  ))}
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Preferred Schedule</label>
-                <div className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-100 rounded-xl text-sm">
-                  <Truck className="w-4 h-4 text-slate-400" />
-                  <span>Next 48 Hours</span>
-                </div>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Target Hub / Zone</label>
+                <select
+                  value={selectedZoneRef}
+                  onChange={(e) => setSelectedZoneRef(e.target.value)}
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold outline-none cursor-pointer text-slate-900"
+                >
+                  <option value="">Self-Pickup (KES 0)</option>
+                  {zones?.map((zone: any) => (
+                    <option key={zone.reference} value={zone.reference}>
+                      {zone.city} (KES {Number(zone.fee).toLocaleString()})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Physical Delivery Address</label>
+                <input
+                  type="text"
+                  placeholder="Street name, plot number, region..."
+                  value={deliveryAddress}
+                  onChange={(e) => setDeliveryAddress(e.target.value)}
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold outline-none text-slate-950"
+                />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Side: Payment Summary */}
-        <div className="space-y-8">
-          <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 space-y-8">
-            <h2 className="text-xl font-bold text-slate-900">Order Summary</h2>
+        {/* Right Column: Split Payment Breakdown */}
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/40 space-y-8">
+          <h2 className="text-lg font-semibold text-slate-950">Purchase Authorization</h2>
 
-            <div className="space-y-4">
-              <div className="flex justify-between text-slate-500">
-                <span>Subtotal ({items.length} items)</span>
-                <span className="font-bold text-slate-900">KES {totalPrice().toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-slate-500">
-                <span>Total VAT (16%)</span>
-                <span className="font-bold text-slate-900">KES {(totalPrice() * 0.16).toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-slate-500">
-                <span>Logistics & Handling</span>
-                <span className="font-bold text-slate-900">KES 2,500</span>
-              </div>
-              <div className="h-[1px] bg-slate-100 my-4" />
-              <div className="flex justify-between">
-                <span className="text-lg font-bold text-slate-900">Payable Amount</span>
-                <span className="text-3xl font-black text-jungle-700">KES {(totalPrice() * 1.16 + 2500).toLocaleString()}</span>
-              </div>
+          <div className="space-y-4">
+            <div className="flex justify-between text-slate-500 text-xs">
+              <span>Gross Material Subtotal</span>
+              <span className="font-semibold text-slate-900 font-mono">KES {totalPrice().toLocaleString()}</span>
             </div>
-
-            <div className="p-4 bg-slate-50 rounded-2xl space-y-4">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Select Primary Payment Method</p>
-              <div className="space-y-2">
-                {["M-PESA Paybill", "Bank Guarantee", "Credit Line"].map((m, i) => (
-                  <label key={m} className="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl cursor-pointer hover:border-jungle-600 transition-all group">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center group-hover:bg-jungle-50 text-slate-400 group-hover:text-jungle-600 transition-colors">
-                        <CreditCard className="w-4 h-4" />
-                      </div>
-                      <span className="text-sm font-bold text-slate-700">{m}</span>
-                    </div>
-                    <input type="radio" name="method" defaultChecked={i === 0} className="w-4 h-4 accent-jungle-600" />
-                  </label>
-                ))}
+            <div className="flex justify-between text-slate-500 text-xs">
+              <span>Immediate Down Payment Due</span>
+              <span className="font-semibold text-jungle-750 font-mono">KES {calculateTotalDownPayment().toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between text-slate-500 text-xs">
+              <span>Future Financed Ledger</span>
+              <span className="font-semibold text-slate-650 font-mono">KES {(totalPrice() - calculateTotalDownPayment()).toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between text-slate-500 text-xs">
+              <span>Logistics Fee</span>
+              <span className="font-semibold text-slate-900 font-mono">KES {logisticsFee.toLocaleString()}</span>
+            </div>
+            <div className="h-px bg-slate-100 my-4" />
+            <div className="flex justify-between items-center">
+              <div>
+                <span className="text-xs font-semibold text-slate-400 uppercase tracking-widest">Aggregate Total</span>
+                <p className="text-[10px] text-slate-500">Escrow released on delivery</p>
               </div>
+              <span className="text-2xl font-bold text-slate-950 font-mono">KES {(totalPrice() + logisticsFee).toLocaleString()}</span>
             </div>
+          </div>
 
-            <button
-              onClick={handlePlaceOrder}
-              disabled={isProcessing}
-              className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-            >
-              {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Place Order & Authorize <ChevronRight className="w-4 h-4" /></>}
-            </button>
+          <div className="p-5 bg-slate-50 rounded-3xl space-y-4">
+            <p className="text-[10px] font-semibold text-slate-450 uppercase tracking-widest">Payment Provider Routing</p>
 
-            <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-              <ShieldCheck className="w-4 h-4 text-jungle-500" />
-              Contractually Binding Agreement
+            <div className="space-y-2">
+              <label className="flex items-center justify-between p-3.5 bg-white border-2 border-jungle-600 rounded-2xl cursor-pointer">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-jungle-50 text-jungle-600 flex items-center justify-center">
+                    <CreditCard className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-xs font-semibold text-slate-800">Paystack Checkout Gateway</span>
+                    <p className="text-[9px] text-slate-400 mt-0.5">Supports KES, USD, and Mobile Money deposits</p>
+                  </div>
+                </div>
+                <div className="w-3.5 h-3.5 rounded-full border-4 border-jungle-600 bg-white" />
+              </label>
             </div>
+          </div>
+
+          <button
+            onClick={handlePlaceOrder}
+            disabled={isProcessing}
+            className="w-full py-4 bg-slate-950 hover:bg-slate-900 text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-all text-xs uppercase tracking-wider disabled:opacity-50"
+          >
+            {isProcessing ? (
+              <span className="flex items-center gap-2">
+                <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Processing Split Escrows...
+              </span>
+            ) : (
+              <>
+                Authorize & Place Order
+                <ChevronRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
+
+          <div className="flex items-center justify-center gap-2 text-[9px] text-slate-400 font-semibold uppercase tracking-widest">
+            <ShieldCheck className="w-4 h-4 text-jungle-500 shrink-0" />
+            Contractually Binding Agreement
           </div>
         </div>
       </div>

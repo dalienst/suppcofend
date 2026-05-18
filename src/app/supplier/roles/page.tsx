@@ -6,9 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import api from "@/lib/api"
-import { 
-  ShieldCheck, 
-  Loader2, 
+import {
+  ShieldCheck,
+  Loader2,
   AlertCircle,
   Plus,
   Edit2,
@@ -55,7 +55,7 @@ export default function SupplierRolesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingRole, setEditingRole] = useState<Role | null>(null)
   const [deletingRole, setDeletingRole] = useState<Role | null>(null)
-  
+
   // Form Setup
   const { register, handleSubmit, reset, control, formState: { errors } } = useForm<RoleValues>({
     resolver: zodResolver(roleSchema),
@@ -129,10 +129,10 @@ export default function SupplierRolesPage() {
 
   const openModalForEdit = (role: Role) => {
     setEditingRole(role)
-    reset({ 
-      name: role.name, 
+    reset({
+      name: role.name,
       is_head: role.is_head,
-      permissions: role.permissions || [] 
+      permissions: role.permissions || []
     })
     setIsModalOpen(true)
   }
@@ -154,12 +154,12 @@ export default function SupplierRolesPage() {
     <div className="p-4 sm:p-8 mx-auto space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Roles & Permissions</h1>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Roles & Permissions</h1>
           <p className="text-slate-500 mt-1">Define custom roles and assign access levels for your team.</p>
         </div>
         <button
           onClick={openModalForCreate}
-          className="bg-suppblue-600 hover:bg-suppblue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-colors shadow-sm self-start sm:self-auto"
+          className="bg-suppblue-600 hover:bg-suppblue-700 text-white px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-colors shadow-sm self-start sm:self-auto"
         >
           <Plus className="w-5 h-5" />
           Create Role
@@ -176,12 +176,12 @@ export default function SupplierRolesPage() {
             <ShieldCheck className="w-8 h-8" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-900 text-lg">No roles defined</h3>
+            <h3 className="font-semibold text-slate-900 text-lg">No roles defined</h3>
             <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto">Create custom roles like "Inventory Manager" or "Accountant" to securely manage your staff.</p>
           </div>
           <button
             onClick={openModalForCreate}
-            className="mt-4 text-suppblue-600 font-bold hover:text-suppblue-700 text-sm"
+            className="mt-4 text-suppblue-600 font-semibold hover:text-suppblue-700 text-sm"
           >
             + Create your first role
           </button>
@@ -190,7 +190,7 @@ export default function SupplierRolesPage() {
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50/50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider text-xs">
+              <thead className="bg-slate-50/50 border-b border-slate-100 text-slate-500 font-semibold uppercase tracking-wider text-xs">
                 <tr>
                   <th className="px-6 py-4">Role Name</th>
                   <th className="px-6 py-4">Status</th>
@@ -206,17 +206,17 @@ export default function SupplierRolesPage() {
                         <div className="w-10 h-10 bg-suppblue-50 text-suppblue-600 rounded-xl flex items-center justify-center shrink-0">
                           <ShieldCheck className="w-5 h-5" />
                         </div>
-                        <span className="font-bold text-slate-900">{role.name}</span>
+                        <span className="font-semibold text-slate-900">{role.name}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       {role.is_head ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-suppblue-100 text-suppblue-700 uppercase tracking-wide">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-suppblue-100 text-suppblue-700 uppercase tracking-wide">
                           <UserCheck className="w-3 h-3" />
                           Department Head
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 uppercase tracking-wide">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600 uppercase tracking-wide">
                           Standard Role
                         </span>
                       )}
@@ -240,14 +240,14 @@ export default function SupplierRolesPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button 
+                        <button
                           onClick={() => openModalForEdit(role)}
                           className="p-1.5 text-slate-400 hover:text-suppblue-600 hover:bg-suppblue-50 rounded-lg transition-colors"
                           title="Edit Role"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
-                        <button 
+                        <button
                           onClick={() => setDeletingRole(role)}
                           className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete Role"
@@ -267,7 +267,7 @@ export default function SupplierRolesPage() {
       {/* Available Permissions Reference Section */}
       <div className="mt-12 space-y-6">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">System Permissions Reference</h2>
+          <h2 className="text-2xl font-semibold text-slate-900 tracking-tight">System Permissions Reference</h2>
           <p className="text-slate-500 mt-1">A complete list of all assignable permissions across the platform.</p>
         </div>
 
@@ -283,7 +283,7 @@ export default function SupplierRolesPage() {
           <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="bg-slate-50/50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider text-xs">
+                <thead className="bg-slate-50/50 border-b border-slate-100 text-slate-500 font-semibold uppercase tracking-wider text-xs">
                   <tr>
                     <th className="px-6 py-4">Permission Name</th>
                     <th className="px-6 py-4">System Codename</th>
@@ -298,7 +298,7 @@ export default function SupplierRolesPage() {
                           <div className="w-8 h-8 bg-suppblue-50 text-suppblue-600 rounded-lg flex items-center justify-center shrink-0">
                             <ShieldCheck className="w-4 h-4" />
                           </div>
-                          <span className="font-bold text-slate-900">{permission.name}</span>
+                          <span className="font-semibold text-slate-900">{permission.name}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -323,24 +323,24 @@ export default function SupplierRolesPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between p-6 border-b border-slate-100 shrink-0">
-              <h2 className="font-bold text-xl text-slate-900">
+              <h2 className="font-semibold text-xl text-slate-900">
                 {editingRole ? "Edit Role" : "Create Custom Role"}
               </h2>
-              <button 
+              <button
                 onClick={closeModal}
                 className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="overflow-y-auto flex-1 p-6">
               <form id="role-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                
+
                 <div className="space-y-6">
-                  <h3 className="font-bold text-sm text-slate-400 uppercase tracking-wider">Role Identity</h3>
+                  <h3 className="font-semibold text-sm text-slate-400 uppercase tracking-wider">Role Identity</h3>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700 ml-1">Role Name <span className="text-red-500">*</span></label>
+                    <label className="text-sm font-semibold text-slate-700 ml-1">Role Name <span className="text-red-500">*</span></label>
                     <input
                       {...register("name")}
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-suppblue-500/20 transition-all outline-none"
@@ -355,7 +355,7 @@ export default function SupplierRolesPage() {
                       control={control}
                       render={({ field }) => (
                         <div className="relative flex items-center mt-0.5">
-                          <input 
+                          <input
                             type="checkbox"
                             checked={field.value}
                             onChange={(e) => field.onChange(e.target.checked)}
@@ -366,7 +366,7 @@ export default function SupplierRolesPage() {
                       )}
                     />
                     <div>
-                      <label className="text-sm font-bold text-slate-900 cursor-pointer">Department Head / Manager</label>
+                      <label className="text-sm font-semibold text-slate-900 cursor-pointer">Department Head / Manager</label>
                       <p className="text-xs text-slate-500 mt-0.5">Enable if this role supervises a branch or site. (Allows them to be assigned as Head of Branch)</p>
                     </div>
                   </div>
@@ -374,10 +374,10 @@ export default function SupplierRolesPage() {
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-sm text-slate-400 uppercase tracking-wider">Access Permissions</h3>
+                    <h3 className="font-semibold text-sm text-slate-400 uppercase tracking-wider">Access Permissions</h3>
                     {isLoadingPermissions && <Loader2 className="w-4 h-4 animate-spin text-suppblue-600" />}
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {availablePermissions.map((permission: Permission) => (
                       <Controller
@@ -387,10 +387,9 @@ export default function SupplierRolesPage() {
                         render={({ field }) => {
                           const isChecked = field.value.includes(permission.codename);
                           return (
-                            <div 
-                              className={`p-3 rounded-xl border transition-all cursor-pointer flex items-start gap-3 ${
-                                isChecked ? 'bg-suppblue-50 border-suppblue-200' : 'bg-white border-slate-200 hover:border-suppblue-200'
-                              }`}
+                            <div
+                              className={`p-3 rounded-xl border transition-all cursor-pointer flex items-start gap-3 ${isChecked ? 'bg-suppblue-50 border-suppblue-200' : 'bg-white border-slate-200 hover:border-suppblue-200'
+                                }`}
                               onClick={() => {
                                 const newValue = isChecked
                                   ? field.value.filter(v => v !== permission.codename)
@@ -399,7 +398,7 @@ export default function SupplierRolesPage() {
                               }}
                             >
                               <div className="relative flex items-center mt-0.5 shrink-0">
-                                <input 
+                                <input
                                   type="checkbox"
                                   checked={isChecked}
                                   readOnly
@@ -408,7 +407,7 @@ export default function SupplierRolesPage() {
                                 <Check className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
                               </div>
                               <div>
-                                <p className={`text-sm font-bold ${isChecked ? 'text-suppblue-900' : 'text-slate-700'}`}>
+                                <p className={`text-sm font-semibold ${isChecked ? 'text-suppblue-900' : 'text-slate-700'}`}>
                                   {permission.name}
                                 </p>
                                 <p className="text-xs text-slate-500 line-clamp-2 mt-0.5">{permission.description}</p>
@@ -428,7 +427,7 @@ export default function SupplierRolesPage() {
               <button
                 type="button"
                 onClick={closeModal}
-                className="flex-1 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold transition-colors shadow-sm"
+                className="flex-1 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-semibold transition-colors shadow-sm"
               >
                 Cancel
               </button>
@@ -436,7 +435,7 @@ export default function SupplierRolesPage() {
                 type="submit"
                 form="role-form"
                 disabled={saveMutation.isPending}
-                className="flex-1 py-3 bg-suppblue-600 hover:bg-suppblue-700 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-70 shadow-sm"
+                className="flex-1 py-3 bg-suppblue-600 hover:bg-suppblue-700 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-70 shadow-sm"
               >
                 {saveMutation.isPending ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
@@ -459,23 +458,23 @@ export default function SupplierRolesPage() {
               <AlertCircle className="w-8 h-8" />
             </div>
             <div>
-              <h2 className="font-bold text-xl text-slate-900">Delete Role?</h2>
+              <h2 className="font-semibold text-xl text-slate-900">Delete Role?</h2>
               <p className="text-slate-500 text-sm mt-2">
                 Are you sure you want to delete the <strong>{deletingRole.name}</strong> role? This might affect employees currently holding this role.
               </p>
             </div>
-            
+
             <div className="flex gap-3">
               <button
                 onClick={() => setDeletingRole(null)}
-                className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold transition-colors"
+                className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => deleteMutation.mutate(deletingRole.reference)}
                 disabled={deleteMutation.isPending}
-                className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
+                className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
               >
                 {deleteMutation.isPending ? (
                   <Loader2 className="w-5 h-5 animate-spin" />

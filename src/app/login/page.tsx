@@ -58,7 +58,7 @@ export default function LoginPage() {
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/10 mb-4">
               <Zap className="w-6 h-6 text-amber-400 fill-amber-400" />
             </div>
-            <h1 className="text-2xl font-bold text-white">Welcome to SUPPCO</h1>
+            <h1 className="text-2xl font-semibold text-white">Welcome to SUPPCO</h1>
             <p className="text-slate-400 text-sm mt-2">Sign in to manage your procurement</p>
           </div>
 
@@ -116,7 +116,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -131,7 +131,7 @@ export default function LoginPage() {
             <div className="text-center pt-4 border-t border-slate-100">
               <p className="text-sm text-slate-500">
                 Don't have an account?{" "}
-                <Link href="/signup" className="font-bold text-slate-900 hover:underline">
+                <Link href="/signup" className="font-semibold text-slate-900 hover:underline">
                   Create Account
                 </Link>
               </p>

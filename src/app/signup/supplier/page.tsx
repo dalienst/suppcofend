@@ -14,7 +14,7 @@ export default function SupplierSignupPage() {
               <ShoppingBag className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-extrabold tracking-tight">Supplier Account</h1>
+              <h1 className="text-2xl font-bold tracking-tight">Supplier Account</h1>
               <p className="text-suppblue-100 text-sm mt-2 leading-relaxed">
                 Start selling your industrial equipment and materials to a vast network of verified contractors.
               </p>
@@ -23,7 +23,7 @@ export default function SupplierSignupPage() {
 
           <div className="flex items-center gap-2 opacity-50">
             <Zap className="w-4 h-4 text-amber-400 fill-amber-400" />
-            <span className="text-[10px] font-bold tracking-widest uppercase">Suppco Core</span>
+            <span className="text-[10px] font-semibold tracking-widest uppercase">Suppco Core</span>
           </div>
         </div>
 

@@ -35,7 +35,7 @@ export default function VerifyEmailPage() {
       <div className="w-full max-w-md bg-white p-10 rounded-3xl shadow-xl border border-slate-200 text-center space-y-8">
         <div className="inline-flex items-center gap-2 mb-2">
           <Zap className="w-6 h-6 text-amber-500 fill-amber-500" />
-          <span className="text-xl font-black tracking-tight text-slate-900">SUPPCO</span>
+          <span className="text-xl font-bold tracking-tight text-slate-900">SUPPCO</span>
         </div>
 
         {status === "loading" && (
@@ -43,7 +43,7 @@ export default function VerifyEmailPage() {
             <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto">
               <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900">Verifying Account...</h1>
+            <h1 className="text-2xl font-semibold text-slate-900">Verifying Account...</h1>
             <p className="text-slate-500">Please wait while we activate your account.</p>
           </div>
         )}
@@ -54,14 +54,14 @@ export default function VerifyEmailPage() {
               <BadgeCheck className="w-12 h-12" />
             </div>
             <div className="space-y-2">
-              <h1 className="text-3xl font-extrabold text-slate-900">Email Verified!</h1>
+              <h1 className="text-3xl font-bold text-slate-900">Email Verified!</h1>
               <p className="text-slate-500">
                 Your account is now active. You can sign in to access the marketplace.
               </p>
             </div>
-            <Link 
+            <Link
               href="/login"
-              className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold transition-all shadow-lg shadow-slate-900/20"
+              className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-semibold transition-all shadow-lg shadow-slate-900/20"
             >
               Sign In to Your Account <ArrowRight className="w-5 h-5" />
             </Link>
@@ -74,13 +74,13 @@ export default function VerifyEmailPage() {
               <XCircle className="w-12 h-12" />
             </div>
             <div className="space-y-2">
-              <h1 className="text-3xl font-extrabold text-slate-900">Verification Failed</h1>
+              <h1 className="text-3xl font-bold text-slate-900">Verification Failed</h1>
               <p className="text-slate-500">{message}</p>
             </div>
             <div className="pt-4 border-t border-slate-100">
-              <Link 
+              <Link
                 href="/login"
-                className="text-sm font-bold text-slate-900 hover:underline"
+                className="text-sm font-semibold text-slate-900 hover:underline"
               >
                 Back to Login
               </Link>

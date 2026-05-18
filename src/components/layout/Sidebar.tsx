@@ -45,6 +45,7 @@ export function Sidebar({ role = "none" }: SidebarProps) {
     { name: "Business Profile", href: "/supplier/company", icon: Building2 },
     { name: "Branch Mgmt", href: "/supplier/branches", icon: Warehouse },
     { name: "Payment Options", href: "/supplier/payment-options", icon: CreditCard },
+    { name: "Shipping Zones", href: "/supplier/delivery-zones", icon: Truck },
     { name: "Inventory", href: "/supplier/inventory", icon: PackageSearch },
     { name: "Roles", href: "/supplier/roles", icon: ShieldCheck },
     { name: "Products", href: "/supplier/products", icon: Package },
@@ -53,7 +54,12 @@ export function Sidebar({ role = "none" }: SidebarProps) {
 
   const links = role === "supplier" ? supplierLinks : role === "contractor" ? contractorLinks : []
 
-  if (role === "none") return null
+  const hideSidebar = 
+    pathname?.startsWith("/marketplace") || 
+    pathname?.startsWith("/cart") || 
+    pathname?.startsWith("/checkout")
+
+  if (hideSidebar || role === "none") return null
 
   return (
     <aside className="w-64 border-r border-slate-200 bg-white flex flex-col h-[calc(100vh-4rem)] sticky top-16">

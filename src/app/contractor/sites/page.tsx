@@ -7,9 +7,9 @@ import * as z from "zod"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import api from "@/lib/api"
 import Link from "next/link"
-import { 
-  MapPin, 
-  Loader2, 
+import {
+  MapPin,
+  Loader2,
   AlertCircle,
   Plus,
   Edit2,
@@ -46,7 +46,7 @@ export default function ContractorSitesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingSite, setEditingSite] = useState<Site | null>(null)
   const [deletingSite, setDeletingSite] = useState<Site | null>(null)
-  
+
   // Local states for frontend pagination & search
   const [searchQuery, setSearchQuery] = useState("")
   const [page, setPage] = useState(1)
@@ -103,9 +103,9 @@ export default function ContractorSitesPage() {
 
   const openModalForEdit = (site: Site) => {
     setEditingSite(site)
-    reset({ 
-      name: site.name, 
-      address: site.address || "" 
+    reset({
+      name: site.name,
+      address: site.address || ""
     })
     setIsModalOpen(true)
   }
@@ -148,12 +148,12 @@ export default function ContractorSitesPage() {
     <div className="p-4 mx-auto space-y-8 animate-in fade-in-50 duration-300">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Sites Management</h1>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Sites Management</h1>
           <p className="text-slate-500 mt-1">Add and manage your operational construction sites and locations.</p>
         </div>
         <button
           onClick={openModalForCreate}
-          className="bg-jungle-600 hover:bg-jungle-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-colors shadow-sm self-start sm:self-auto"
+          className="bg-jungle-600 hover:bg-jungle-700 text-white px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 transition-colors shadow-sm self-start sm:self-auto"
         >
           <Plus className="w-5 h-5" />
           Add Site
@@ -170,12 +170,12 @@ export default function ContractorSitesPage() {
             <Warehouse className="w-8 h-8" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-900 text-lg">No active sites</h3>
+            <h3 className="font-semibold text-slate-900 text-lg">No active sites</h3>
             <p className="text-slate-500 text-sm mt-1 max-w-sm mx-auto">You haven't added any construction sites. Create your first site to start tracking physical locations.</p>
           </div>
           <button
             onClick={openModalForCreate}
-            className="mt-4 text-jungle-600 font-bold hover:text-jungle-700 text-sm inline-block"
+            className="mt-4 text-jungle-600 font-semibold hover:text-jungle-700 text-sm inline-block"
           >
             + Create a construction site
           </button>
@@ -195,7 +195,7 @@ export default function ContractorSitesPage() {
               />
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
+              <span className="text-xs font-semibold text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
                 Frontend Filter: active
               </span>
             </div>
@@ -204,7 +204,7 @@ export default function ContractorSitesPage() {
           {/* Table */}
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50/50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider text-xs">
+              <thead className="bg-slate-50/50 border-b border-slate-100 text-slate-500 font-semibold uppercase tracking-wider text-xs">
                 <tr>
                   <th className="px-6 py-4">Site Details</th>
                   <th className="px-6 py-4">Reference ID</th>
@@ -221,7 +221,7 @@ export default function ContractorSitesPage() {
                         <div className="w-10 h-10 bg-jungle-50 text-jungle-600 rounded-xl flex items-center justify-center shrink-0 group-hover/link:bg-jungle-600 group-hover/link:text-white transition-colors">
                           <Warehouse className="w-5 h-5" />
                         </div>
-                        <span className="font-bold text-slate-900 group-hover/link:text-jungle-700 transition-colors flex items-center gap-1">
+                        <span className="font-semibold text-slate-900 group-hover/link:text-jungle-700 transition-colors flex items-center gap-1">
                           {site.name}
                           <ExternalLink className="w-3 h-3 opacity-0 group-hover/link:opacity-100 transition-opacity text-slate-400" />
                         </span>
@@ -241,14 +241,14 @@ export default function ContractorSitesPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button 
+                        <button
                           onClick={() => openModalForEdit(site)}
                           className="p-1.5 text-slate-400 hover:text-jungle-600 hover:bg-jungle-50 rounded-lg transition-colors"
                           title="Edit Site"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
-                        <button 
+                        <button
                           onClick={() => setDeletingSite(site)}
                           className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete Site"
@@ -268,13 +268,13 @@ export default function ContractorSitesPage() {
               <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto">
                 <Warehouse className="w-8 h-8 text-slate-300" />
               </div>
-              <p className="text-slate-500 font-bold">No physical sites match your search keyword.</p>
+              <p className="text-slate-500 font-semibold">No physical sites match your search keyword.</p>
             </div>
           )}
 
           {/* Local Pagination Footer Controls */}
           {totalCount > 0 && (
-            <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50 text-xs text-slate-500 font-bold shrink-0">
+            <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50 text-xs text-slate-500 font-semibold shrink-0">
               <div>
                 Showing {Math.min(totalCount, (page - 1) * ITEMS_PER_PAGE + 1)} to{" "}
                 {Math.min(totalCount, page * ITEMS_PER_PAGE)} of {totalCount} total entries
@@ -310,20 +310,20 @@ export default function ContractorSitesPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between p-6 border-b border-slate-100">
-              <h2 className="font-bold text-xl text-slate-900">
+              <h2 className="font-semibold text-xl text-slate-900">
                 {editingSite ? "Edit Site" : "Add New Site"}
               </h2>
-              <button 
+              <button
                 onClick={closeModal}
                 className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 ml-1">Site Name <span className="text-red-500">*</span></label>
+                <label className="text-sm font-semibold text-slate-700 ml-1">Site Name <span className="text-red-500">*</span></label>
                 <input
                   {...register("name")}
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-jungle-500/20 transition-all outline-none"
@@ -333,7 +333,7 @@ export default function ContractorSitesPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 ml-1">Physical Location</label>
+                <label className="text-sm font-semibold text-slate-700 ml-1">Physical Location</label>
                 <textarea
                   {...register("address")}
                   rows={3}
@@ -346,14 +346,14 @@ export default function ContractorSitesPage() {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 px-4 py-3 border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+                  className="flex-1 px-4 py-3 border border-slate-200 text-slate-700 rounded-xl font-semibold hover:bg-slate-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saveMutation.isPending}
-                  className="flex-1 px-4 py-3 bg-jungle-600 text-white rounded-xl font-bold hover:bg-jungle-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-3 bg-jungle-600 text-white rounded-xl font-semibold hover:bg-jungle-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {saveMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
                   {editingSite ? "Save Changes" : "Create Site"}
@@ -371,11 +371,11 @@ export default function ContractorSitesPage() {
             <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto">
               <AlertCircle className="w-8 h-8" />
             </div>
-            
+
             <div>
-              <h2 className="font-black text-xl text-slate-900">Delete Site?</h2>
+              <h2 className="font-bold text-xl text-slate-900">Delete Site?</h2>
               <p className="text-slate-500 text-sm mt-2">
-                Are you sure you want to delete <span className="font-bold text-slate-700">{deletingSite.name}</span>? This action cannot be undone.
+                Are you sure you want to delete <span className="font-semibold text-slate-700">{deletingSite.name}</span>? This action cannot be undone.
               </p>
             </div>
 
@@ -383,14 +383,14 @@ export default function ContractorSitesPage() {
               <button
                 type="button"
                 onClick={() => setDeletingSite(null)}
-                className="flex-1 px-4 py-3 border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-colors"
+                className="flex-1 px-4 py-3 border border-slate-200 text-slate-700 rounded-xl font-semibold hover:bg-slate-50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => deleteMutation.mutate(deletingSite.reference)}
                 disabled={deleteMutation.isPending}
-                className="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {deleteMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Delete"}
               </button>
