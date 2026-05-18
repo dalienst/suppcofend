@@ -86,10 +86,22 @@ export default function CheckoutPage() {
 
       // 2. Dispatch checkout call to split orders per supplier
       const checkoutRes = await api.post("/api/v1/orders/checkout/")
+      const orderRefs = checkoutRes.data.map((ord: any) => ord.reference)
 
-      // Store the resulting split orders for display
-      setCreatedOrders(checkoutRes.data)
+      // 3. Initialize Paystack downpayment transaction
+      const paymentInitRes = await api.post("/api/v1/payments/initialize/", {
+        order_references: orderRefs
+      })
+
       clearCart()
+
+      // Redirect contractor directly to Paystack's secure checkout gateway (supports Card + M-Pesa)
+      if (paymentInitRes.data?.authorization_url) {
+        window.location.href = paymentInitRes.data.authorization_url
+      } else {
+        // Fallback in case of response anomaly
+        setCreatedOrders(checkoutRes.data)
+      }
     } catch (err: any) {
       console.error(err)
       setErrorMessage(
