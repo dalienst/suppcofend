@@ -1,6 +1,6 @@
 "use client"
 
-import { useCartStore, CartItem } from "@/lib/store"
+import { useCartStore } from "@/lib/store"
 import {
   ShoppingBag,
   Trash2,
@@ -29,7 +29,7 @@ export default function CartPage() {
 
   // Calculate sum of initial required down payments (escrows)
   const calculateTotalDownPayment = () => {
-    return items.reduce((acc: number, item: CartItem) => {
+    return (items as any[]).reduce((acc: number, item: any) => {
       const itemTotal = item.price * item.quantity
       if (item.payment_type === "PAYMENT_ON_DELIVERY") {
         return acc + 0
@@ -96,7 +96,7 @@ export default function CartPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
         {/* Item List */}
         <div className="lg:col-span-2 space-y-6">
-          {items.map((item: CartItem) => {
+          {items.map((item: any) => {
             return (
               <div
                 key={`${item.reference}-${item.paymentOptionReference}`}
