@@ -10,6 +10,9 @@ export interface CartItem {
   paymentOptionReference: string
   paymentOptionName: string
   image?: string
+  deposit_amount?: number
+  duration_months?: number
+  monthly_amount?: number
 }
 
 interface CartStore {
@@ -23,12 +26,12 @@ interface CartStore {
 
 export const useCartStore = create<CartStore>()(
   persist(
-    (set, get) => ({
+    (set: any, get: any) => ({
       items: [],
-      addItem: (newItem) => {
+      addItem: (newItem: CartItem) => {
         const currentItems = get().items
         const existingItemIndex = currentItems.findIndex(
-          (item) => item.reference === newItem.reference && item.paymentOptionReference === newItem.paymentOptionReference
+          (item: CartItem) => item.reference === newItem.reference && item.paymentOptionReference === newItem.paymentOptionReference
         )
 
         if (existingItemIndex > -1) {
@@ -39,16 +42,16 @@ export const useCartStore = create<CartStore>()(
           set({ items: [...currentItems, newItem] })
         }
       },
-      removeItem: (reference, paymentOptionReference) => {
+      removeItem: (reference: string, paymentOptionReference: string) => {
         set({
           items: get().items.filter(
-            (item) => !(item.reference === reference && item.paymentOptionReference === paymentOptionReference)
+            (item: CartItem) => !(item.reference === reference && item.paymentOptionReference === paymentOptionReference)
           ),
         })
       },
       clearCart: () => set({ items: [] }),
-      totalItems: () => get().items.reduce((acc, item) => acc + item.quantity, 0),
-      totalPrice: () => get().items.reduce((acc, item) => acc + item.price * item.quantity, 0),
+      totalItems: () => get().items.reduce((acc: number, item: CartItem) => acc + item.quantity, 0),
+      totalPrice: () => get().items.reduce((acc: number, item: CartItem) => acc + item.price * item.quantity, 0),
     }),
     {
       name: "suppco-cart-storage",

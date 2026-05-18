@@ -49,9 +49,9 @@ export default function RequestResetPage() {
               We've sent a 6-digit verification code to your email. Use it to reset your password.
             </p>
           </div>
-          <button 
+          <button
             onClick={() => router.push("/password/new")}
-            className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 transition-all"
+            className="w-full py-4 bg-slate-900 text-white rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-slate-800 transition-all"
           >
             Enter Reset Code <ArrowRight className="w-4 h-4" />
           </button>
@@ -66,7 +66,7 @@ export default function RequestResetPage() {
         <div className="text-center">
           <div className="inline-flex items-center gap-2 mb-4">
             <Zap className="w-6 h-6 text-amber-500 fill-amber-500" />
-            <span className="text-xl font-black tracking-tight text-slate-900">SUPPCO</span>
+            <span className="text-xl font-bold tracking-tight text-slate-900">SUPPCO</span>
           </div>
           <h1 className="text-3xl font-extrabold text-slate-900">Reset Password</h1>
           <p className="text-slate-500 mt-2">Enter your email to receive a reset code.</p>
@@ -95,13 +95,13 @@ export default function RequestResetPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+            className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50"
           >
             {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Send Reset Link"}
           </button>
 
           <div className="text-center pt-4 border-t border-slate-100">
-            <Link href="/login" className="text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">
+            <Link href="/login" className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">
               Back to Sign In
             </Link>
           </div>

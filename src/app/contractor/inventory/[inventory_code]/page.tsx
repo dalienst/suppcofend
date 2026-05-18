@@ -126,7 +126,7 @@ const ProductsTable = ({ products, router }: { products: MiniProduct[], router: 
                     e.stopPropagation();
                     router.push(`/contractor/products/${product.reference}`)
                   }}
-                  className="text-xs font-bold text-jungle-600 hover:text-jungle-700 bg-jungle-50 hover:bg-jungle-100 px-3 py-1.5 rounded-lg transition-colors"
+                  className="text-xs font-semibold text-jungle-600 hover:text-jungle-700 bg-jungle-50 hover:bg-jungle-100 px-3 py-1.5 rounded-lg transition-colors"
                 >
                   View Details
                 </button>
@@ -198,10 +198,10 @@ const SublayerItemNode = ({ item, onAddChild, onAssignProduct, router }: { item:
       {isOpen && (
         <div className="mt-1 border border-slate-100 rounded-xl bg-slate-50/30 overflow-hidden mb-3">
           <div className="flex border-b border-slate-200/60 px-2 pt-2 gap-2 bg-slate-50/50">
-            <button onClick={() => setTab("structure")} className={`px-3 py-1.5 text-xs font-bold rounded-t-lg transition-colors ${tab === "structure" ? "bg-white text-jungle-600 border-x border-t border-slate-200/60 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+            <button onClick={() => setTab("structure")} className={`px-3 py-1.5 text-xs font-semibold rounded-t-lg transition-colors ${tab === "structure" ? "bg-white text-jungle-600 border-x border-t border-slate-200/60 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
               Structure
             </button>
-            <button onClick={() => setTab("products")} className={`px-3 py-1.5 text-xs font-bold rounded-t-lg transition-colors ${tab === "products" ? "bg-white text-jungle-600 border-x border-t border-slate-200/60 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+            <button onClick={() => setTab("products")} className={`px-3 py-1.5 text-xs font-semibold rounded-t-lg transition-colors ${tab === "products" ? "bg-white text-jungle-600 border-x border-t border-slate-200/60 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
               Products
             </button>
           </div>
@@ -256,10 +256,10 @@ const SublayerNode = ({ sublayer, onAddChild, onAssignProduct, router }: { subla
       {isOpen && (
         <div className="mt-1 border border-slate-200 rounded-xl bg-slate-50/50 overflow-hidden mb-4 shadow-sm">
           <div className="flex border-b border-slate-200 px-4 pt-3 gap-3 bg-slate-100/50">
-            <button onClick={() => setTab("structure")} className={`px-4 py-2 text-sm font-bold rounded-t-xl transition-colors ${tab === "structure" ? "bg-white text-jungle-600 border-x border-t border-slate-200 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+            <button onClick={() => setTab("structure")} className={`px-4 py-2 text-sm font-semibold rounded-t-xl transition-colors ${tab === "structure" ? "bg-white text-jungle-600 border-x border-t border-slate-200 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
               Structure
             </button>
-            <button onClick={() => setTab("products")} className={`px-4 py-2 text-sm font-bold rounded-t-xl transition-colors ${tab === "products" ? "bg-white text-jungle-600 border-x border-t border-slate-200 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+            <button onClick={() => setTab("products")} className={`px-4 py-2 text-sm font-semibold rounded-t-xl transition-colors ${tab === "products" ? "bg-white text-jungle-600 border-x border-t border-slate-200 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
               Products
             </button>
           </div>
@@ -306,7 +306,7 @@ const LayerNode = ({
           <Layers className="w-5 h-5 text-jungle-600" />
         </div>
         <div>
-          <h3 className="font-bold text-lg text-slate-900">{layer.name}</h3>
+          <h3 className="font-semibold text-lg text-slate-900">{layer.name}</h3>
           <div className="flex gap-2 mt-1">
             <span className="text-xs font-medium text-slate-500 bg-slate-200/50 px-2 py-0.5 rounded-full">{layer.sublayers?.length || 0} sublayers</span>
             <span className="text-xs font-medium text-slate-500 bg-slate-200/50 px-2 py-0.5 rounded-full">{layer.products?.length || 0} products</span>
@@ -322,7 +322,7 @@ const LayerNode = ({
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onAssignProduct("layer", layer.reference) }}
-            className="text-sm font-bold text-white bg-jungle-600 hover:bg-jungle-700 px-4 py-2 rounded-xl flex items-center gap-1 transition-colors shadow-sm"
+            className="text-sm font-semibold text-white bg-jungle-600 hover:bg-jungle-700 px-4 py-2 rounded-xl flex items-center gap-1 transition-colors shadow-sm"
           >
             <Plus className="w-4 h-4" /> Add Product
           </button>
@@ -333,10 +333,10 @@ const LayerNode = ({
       {isOpen && (
         <div className="bg-white">
           <div className="flex border-b border-slate-100 px-5 pt-4 bg-slate-50/30">
-            <button onClick={() => setTab("structure")} className={`px-5 py-2.5 text-sm font-bold border-b-2 transition-colors ${tab === "structure" ? "border-jungle-600 text-jungle-600" : "border-transparent text-slate-500 hover:text-slate-700"}`}>
+            <button onClick={() => setTab("structure")} className={`px-5 py-2.5 text-sm font-semibold border-b-2 transition-colors ${tab === "structure" ? "border-jungle-600 text-jungle-600" : "border-transparent text-slate-500 hover:text-slate-700"}`}>
               Structure
             </button>
-            <button onClick={() => setTab("products")} className={`px-5 py-2.5 text-sm font-bold border-b-2 transition-colors ${tab === "products" ? "border-jungle-600 text-jungle-600" : "border-transparent text-slate-500 hover:text-slate-700"}`}>
+            <button onClick={() => setTab("products")} className={`px-5 py-2.5 text-sm font-semibold border-b-2 transition-colors ${tab === "products" ? "border-jungle-600 text-jungle-600" : "border-transparent text-slate-500 hover:text-slate-700"}`}>
               Products
             </button>
           </div>
@@ -681,13 +681,13 @@ export default function InventoryExplorerPage() {
             <div className="flex border-b border-slate-100">
               <button
                 onClick={() => setProductModal({ ...productModal, tab: "link" })}
-                className={`flex-1 py-3 text-sm font-bold border-b-2 transition-colors ${productModal.tab === "link" ? "border-jungle-600 text-jungle-600" : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50"}`}
+                className={`flex-1 py-3 text-sm font-semibold border-b-2 transition-colors ${productModal.tab === "link" ? "border-jungle-600 text-jungle-600" : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50"}`}
               >
                 Link Existing
               </button>
               <button
                 onClick={() => setProductModal({ ...productModal, tab: "create" })}
-                className={`flex-1 py-3 text-sm font-bold border-b-2 transition-colors ${productModal.tab === "create" ? "border-jungle-600 text-jungle-600" : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50"}`}
+                className={`flex-1 py-3 text-sm font-semibold border-b-2 transition-colors ${productModal.tab === "create" ? "border-jungle-600 text-jungle-600" : "border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50"}`}
               >
                 Quick Create
               </button>

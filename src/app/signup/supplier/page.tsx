@@ -23,7 +23,7 @@ export default function SupplierSignupPage() {
 
           <div className="flex items-center gap-2 opacity-50">
             <Zap className="w-4 h-4 text-amber-400 fill-amber-400" />
-            <span className="text-[10px] font-bold tracking-widest uppercase">Suppco Core</span>
+            <span className="text-[10px] font-semibold tracking-widest uppercase">Suppco Core</span>
           </div>
         </div>
 

@@ -3,12 +3,12 @@
 import { useQuery } from "@tanstack/react-query"
 import api from "@/lib/api"
 import Link from "next/link"
-import { 
-  Building2, 
-  Package, 
-  Truck, 
-  DollarSign, 
-  Clock, 
+import {
+  Building2,
+  Package,
+  Truck,
+  DollarSign,
+  Clock,
   AlertCircle,
   ArrowUpRight,
   Loader2,
@@ -57,7 +57,7 @@ interface Branch {
 }
 
 export default function SupplierDashboard() {
-  
+
   // 1. Fetch Real-time Products Data
   const { data: productsData, isLoading: isLoadingProducts } = useQuery<any>({
     queryKey: ["supplier-products-dashboard"],
@@ -92,7 +92,7 @@ export default function SupplierDashboard() {
       <div className="flex items-center justify-center min-h-[500px]">
         <div className="text-center space-y-3">
           <Loader2 className="w-10 h-10 animate-spin text-suppblue-600 mx-auto" />
-          <p className="text-slate-500 text-xs font-bold">Compiling supplier overview metrics...</p>
+          <p className="text-slate-500 text-xs font-semibold">Compiling supplier overview metrics...</p>
         </div>
       </div>
     )
@@ -106,7 +106,7 @@ export default function SupplierDashboard() {
   const totalProducts = productsList.length
   const totalBranches = branchesList.length
   const totalOrders = ordersList.length
-  
+
   // Total Revenue (Sum total amount of COMPLETED or PLACED orders)
   const totalRevenue = ordersList
     .filter(order => order.status !== "CANCELLED" && order.status !== "DRAFT")
@@ -120,31 +120,31 @@ export default function SupplierDashboard() {
 
   // Stat Widgets Mapping
   const stats = [
-    { 
-      label: "Total Revenue", 
-      value: `KES ${totalRevenue.toLocaleString()}`, 
-      icon: DollarSign, 
+    {
+      label: "Total Revenue",
+      value: `KES ${totalRevenue.toLocaleString()}`,
+      icon: DollarSign,
       color: "bg-suppblue-600 text-white shadow-suppblue-500/20",
       description: "From active orders"
     },
-    { 
-      label: "Active Products", 
-      value: String(totalProducts), 
-      icon: Package, 
+    {
+      label: "Active Products",
+      value: String(totalProducts),
+      icon: Package,
       color: "bg-indigo-600 text-white shadow-indigo-500/20",
       description: "Listed in catalogue"
     },
-    { 
-      label: "Fulfillment Requests", 
-      value: String(totalOrders), 
-      icon: Clock, 
+    {
+      label: "Fulfillment Requests",
+      value: String(totalOrders),
+      icon: Clock,
       color: "bg-amber-500 text-white shadow-amber-500/20",
       description: `${pendingOrders} awaiting dispatch`
     },
-    { 
-      label: "Operational Branches", 
-      value: String(totalBranches), 
-      icon: Building2, 
+    {
+      label: "Operational Branches",
+      value: String(totalBranches),
+      icon: Building2,
       color: "bg-emerald-600 text-white shadow-emerald-500/20",
       description: "Assigned base locations"
     },
@@ -160,7 +160,7 @@ export default function SupplierDashboard() {
       case "PARTIALLY_DISPATCHED":
         return "bg-indigo-50 border-indigo-100 text-indigo-700"
       case "PLACED":
-        return "bg-amber-50 border-amber-100 text-amber-700 font-black animate-pulse"
+        return "bg-amber-50 border-amber-100 text-amber-700 font-bold animate-pulse"
       case "CANCELLED":
         return "bg-red-50 border-red-100 text-red-700"
       default:
@@ -170,17 +170,17 @@ export default function SupplierDashboard() {
 
   return (
     <div className="p-4 mx-auto space-y-8 animate-in fade-in-50 duration-300">
-      
+
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Supplier Overview</h1>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Supplier Overview</h1>
           <p className="text-slate-500 text-xs mt-1">Real-time tracking of operational metrics, branches, and fulfillment pipelines.</p>
         </div>
         <div className="flex gap-3">
           <Link
             href="/supplier/products/new"
-            className="bg-suppblue-600 hover:bg-suppblue-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-sm"
+            className="bg-suppblue-600 hover:bg-suppblue-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all shadow-sm"
           >
             <Package className="w-4 h-4" />
             List New Product
@@ -193,8 +193,8 @@ export default function SupplierDashboard() {
         {stats.map((stat) => (
           <div key={stat.label} className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-start justify-between group hover:shadow-md transition-all duration-300">
             <div className="space-y-2">
-              <p className="text-slate-400 text-[10px] font-bold uppercase tracking-wider">{stat.label}</p>
-              <h3 className="text-2xl font-black text-slate-900 tracking-tight">{stat.value}</h3>
+              <p className="text-slate-400 text-[10px] font-semibold uppercase tracking-wider">{stat.label}</p>
+              <h3 className="text-2xl font-bold text-slate-900 tracking-tight">{stat.value}</h3>
               <p className="text-[11px] text-slate-500 font-medium">{stat.description}</p>
             </div>
             <div className={cn("w-10 h-10 rounded-2xl flex items-center justify-center shadow-md", stat.color)}>
@@ -206,15 +206,15 @@ export default function SupplierDashboard() {
 
       {/* Roster & Racks section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* Recent Fulfillment Requests */}
         <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col min-h-[400px]">
           <div className="p-6 border-b border-slate-100 flex items-center justify-between">
             <div>
-              <h2 className="font-black text-slate-900 text-lg">Fulfillment Requests</h2>
+              <h2 className="font-bold text-slate-900 text-lg">Fulfillment Requests</h2>
               <p className="text-slate-500 text-[11px] mt-0.5">Fulfillment tasks submitted by general contractors.</p>
             </div>
-            <span className="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full">
+            <span className="bg-slate-100 text-slate-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">
               {ordersList.length} Active
             </span>
           </div>
@@ -226,7 +226,7 @@ export default function SupplierDashboard() {
                   <Truck className="w-7 h-7" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800">No Fulfillment Requests</h3>
+                  <h3 className="font-semibold text-slate-800">No Fulfillment Requests</h3>
                   <p className="text-slate-500 text-xs mt-1 leading-relaxed">
                     Once contractors place orders for your catalogue items, they will instantly stream into this live queue.
                   </p>
@@ -234,7 +234,7 @@ export default function SupplierDashboard() {
               </div>
             ) : (
               <table className="w-full text-left text-xs border-collapse">
-                <thead className="bg-slate-50/50 border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
+                <thead className="bg-slate-50/50 border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider">
                   <tr>
                     <th className="px-6 py-3.5">Order Code</th>
                     <th className="px-6 py-3.5">Contractor</th>
@@ -246,33 +246,33 @@ export default function SupplierDashboard() {
                 <tbody className="divide-y divide-slate-100">
                   {ordersList.slice(0, 5).map((order) => {
                     const firstItem = order.items?.[0];
-                    const itemSummary = firstItem 
+                    const itemSummary = firstItem
                       ? `${firstItem.product?.product_name || firstItem.product?.name || "Product"} (x${firstItem.quantity})`
                       : "No items";
                     const extraCount = (order.items?.length || 0) - 1;
 
                     return (
                       <tr key={order.reference} className="hover:bg-slate-50/50 transition-colors group">
-                        <td className="px-6 py-4 font-mono font-bold text-slate-900">
+                        <td className="px-6 py-4 font-mono font-semibold text-slate-900">
                           #{order.reference.substring(0, 8).toUpperCase()}
                         </td>
                         <td className="px-6 py-4 text-slate-600 font-medium">
                           @{order.user}
                         </td>
                         <td className="px-6 py-4 text-slate-500">
-                          <span className="font-bold text-slate-700">{itemSummary}</span>
+                          <span className="font-semibold text-slate-700">{itemSummary}</span>
                           {extraCount > 0 && (
                             <span className="text-[10px] text-slate-400 font-semibold block mt-0.5">
                               + {extraCount} more products
                             </span>
                           )}
                         </td>
-                        <td className="px-6 py-4 font-bold text-slate-900">
+                        <td className="px-6 py-4 font-semibold text-slate-900">
                           KES {Number(order.total_amount).toLocaleString()}
                         </td>
                         <td className="px-6 py-4">
                           <span className={cn(
-                            "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase border",
+                            "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold uppercase border",
                             getStatusBadge(order.status)
                           )}>
                             {order.status}
@@ -290,7 +290,7 @@ export default function SupplierDashboard() {
         {/* Dynamic Stock Alerts */}
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
           <div className="p-6 border-b border-slate-100 shrink-0">
-            <h2 className="font-black text-slate-900 text-lg">Inventory Alerts</h2>
+            <h2 className="font-bold text-slate-900 text-lg">Inventory Alerts</h2>
             <p className="text-slate-500 text-[11px] mt-0.5">Real-time warnings for items nearing storage exhaustion.</p>
           </div>
 
@@ -301,7 +301,7 @@ export default function SupplierDashboard() {
                   <ShieldCheck className="w-8 h-8" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800">All Stock Levels Healthy</h3>
+                  <h3 className="font-semibold text-slate-800">All Stock Levels Healthy</h3>
                   <p className="text-slate-500 text-xs mt-1 leading-relaxed">
                     All industrial inventory items are currently well-stocked and above minimum reorder points.
                   </p>
@@ -314,15 +314,15 @@ export default function SupplierDashboard() {
                     <AlertCircle className="w-5 h-5 animate-pulse" />
                   </div>
                   <div className="space-y-1.5 overflow-hidden flex-1">
-                    <p className="text-sm font-bold text-slate-900 truncate">
+                    <p className="text-sm font-semibold text-slate-900 truncate">
                       {item.product_name || item.name || "Unnamed Product"}
                     </p>
                     <p className="text-xs text-slate-500 leading-relaxed">
-                      Current: <span className="font-bold text-red-600">{Number(item.quantity)} units</span> left. (SKU: {item.sku})
+                      Current: <span className="font-semibold text-red-600">{Number(item.quantity)} units</span> left. (SKU: {item.sku})
                     </p>
-                    <Link 
+                    <Link
                       href={`/supplier/products/${item.reference}`}
-                      className="text-[10px] font-bold text-red-600 hover:text-red-700 transition-colors uppercase tracking-wider flex items-center gap-0.5"
+                      className="text-[10px] font-semibold text-red-600 hover:text-red-700 transition-colors uppercase tracking-wider flex items-center gap-0.5"
                     >
                       Inspect & Restock
                       <ChevronRight className="w-3.5 h-3.5" />

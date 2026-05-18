@@ -35,7 +35,7 @@ export default async function RootLayout({
           "font-sans antialiased h-full flex flex-col pt-16 bg-slate-50"
         )}
       >
-        <Providers>
+        <Providers session={session}>
           <Navbar />
           <div className="flex-1 flex overflow-hidden">
             {role !== "none" && <Sidebar role={role as any} />}

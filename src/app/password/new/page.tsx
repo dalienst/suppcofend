@@ -58,9 +58,9 @@ export default function NewPasswordPage() {
               Your password has been reset successfully. You can now sign in with your new credentials.
             </p>
           </div>
-          <button 
+          <button
             onClick={() => router.push("/login")}
-            className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 transition-all shadow-lg"
+            className="w-full py-4 bg-slate-900 text-white rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-slate-800 transition-all shadow-lg"
           >
             Go to Sign In <ArrowRight className="w-4 h-4" />
           </button>
@@ -75,7 +75,7 @@ export default function NewPasswordPage() {
         <div className="text-center">
           <div className="inline-flex items-center gap-2 mb-4">
             <Zap className="w-6 h-6 text-amber-500 fill-amber-500" />
-            <span className="text-xl font-black tracking-tight text-slate-900">SUPPCO</span>
+            <span className="text-xl font-bold tracking-tight text-slate-900">SUPPCO</span>
           </div>
           <h1 className="text-3xl font-extrabold text-slate-900">Create New Password</h1>
           <p className="text-slate-500 mt-2">Enter the 6-digit code sent to your email.</p>
@@ -143,7 +143,7 @@ export default function NewPasswordPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition-all disabled:opacity-50 mt-4"
+            className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-all disabled:opacity-50 mt-4"
           >
             {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Update Password"}
           </button>

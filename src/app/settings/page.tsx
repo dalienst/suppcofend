@@ -7,15 +7,15 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import api from "@/lib/api"
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  BadgeCheck, 
-  FileText, 
-  Loader2, 
-  CheckCircle2, 
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  BadgeCheck,
+  FileText,
+  Loader2,
+  CheckCircle2,
   AlertCircle,
   Camera,
   Shield
@@ -90,7 +90,7 @@ export default function SettingsPage() {
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Account Settings</h1>
+        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Account Settings</h1>
         <p className="text-slate-500 mt-1">Manage your professional profile and account security.</p>
       </div>
 
@@ -98,7 +98,7 @@ export default function SettingsPage() {
         {/* Sidebar Nav */}
         <div className="space-y-1">
           <button className={cn(
-            "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all",
+            "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all",
             `bg-${themeColor}-50 text-${themeColor}-700`
           )}>
             <User className="w-4 h-4" />
@@ -123,7 +123,7 @@ export default function SettingsPage() {
                 </button>
               </div>
               <div>
-                <h3 className="font-bold text-slate-900">Profile Photo</h3>
+                <h3 className="font-semibold text-slate-900">Profile Photo</h3>
                 <p className="text-xs text-slate-500 mt-1">PNG, JPG up to 10MB</p>
               </div>
             </div>
@@ -145,7 +145,7 @@ export default function SettingsPage() {
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700 ml-1">First Name</label>
+                  <label className="text-sm font-semibold text-slate-700 ml-1">First Name</label>
                   <input
                     {...register("first_name")}
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-slate-900/10 transition-all outline-none"
@@ -154,7 +154,7 @@ export default function SettingsPage() {
                   {errors.first_name && <p className="text-xs text-red-500">{errors.first_name.message}</p>}
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700 ml-1">Last Name</label>
+                  <label className="text-sm font-semibold text-slate-700 ml-1">Last Name</label>
                   <input
                     {...register("last_name")}
                     className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-slate-900/10 transition-all outline-none"
@@ -165,7 +165,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
+                <label className="text-sm font-semibold text-slate-700 ml-1">Email Address</label>
                 <div className="relative opacity-60">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
@@ -179,7 +179,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 ml-1">Phone Number</label>
+                <label className="text-sm font-semibold text-slate-700 ml-1">Phone Number</label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
@@ -193,7 +193,7 @@ export default function SettingsPage() {
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700 ml-1">ID/Passport No.</label>
+                  <label className="text-sm font-semibold text-slate-700 ml-1">ID/Passport No.</label>
                   <div className="relative">
                     <BadgeCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
@@ -203,7 +203,7 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700 ml-1">KRA PIN</label>
+                  <label className="text-sm font-semibold text-slate-700 ml-1">KRA PIN</label>
                   <div className="relative">
                     <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                     <input
@@ -215,7 +215,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 ml-1">Primary Location</label>
+                <label className="text-sm font-semibold text-slate-700 ml-1">Primary Location</label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
@@ -232,9 +232,9 @@ export default function SettingsPage() {
                 type="submit"
                 disabled={mutation.isPending}
                 className={cn(
-                  "px-8 py-3 rounded-xl font-bold text-white transition-all shadow-lg",
-                  isSupplier 
-                    ? "bg-suppblue-700 hover:bg-suppblue-800 shadow-suppblue-700/20" 
+                  "px-8 py-3 rounded-xl font-semibold text-white transition-all shadow-lg",
+                  isSupplier
+                    ? "bg-suppblue-700 hover:bg-suppblue-800 shadow-suppblue-700/20"
                     : "bg-jungle-700 hover:bg-jungle-800 shadow-jungle-700/20",
                   "disabled:opacity-50"
                 )}

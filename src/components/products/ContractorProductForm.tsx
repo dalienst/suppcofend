@@ -5,11 +5,11 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { cn } from "@/lib/utils"
 import * as z from "zod"
-import { 
-  useLayers, 
-  useSublayers, 
-  useSublayerItems, 
-  useBrackets, 
+import {
+  useLayers,
+  useSublayers,
+  useSublayerItems,
+  useBrackets,
   usePaymentOptions,
   useSites
 } from "@/hooks/useInventory"
@@ -36,13 +36,13 @@ type ContractorProductFormValues = z.infer<typeof productSchema>
 export function ContractorProductForm() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  
-  const { 
-    register, 
-    handleSubmit, 
-    watch, 
-    setValue, 
-    formState: { errors } 
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors }
   } = useForm<ContractorProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -73,7 +73,7 @@ export function ContractorProductForm() {
 
   const onSubmit = async (data: ContractorProductFormValues) => {
     setIsSubmitting(true)
-    
+
     // Omit optional fields completely if they are empty, preventing DRF SlugRelatedField validation errors
     const payload: any = {
       product_name: data.product_name,
@@ -90,7 +90,7 @@ export function ContractorProductForm() {
     if (data.payment_options && data.payment_options.length > 0) {
       payload.payment_options = data.payment_options
     }
-    
+
     try {
       await api.post("/api/v1/products/", payload)
       toast.success("Product listed successfully!")
@@ -99,7 +99,7 @@ export function ContractorProductForm() {
       console.error("Failed to create product:", error)
       const data = error?.response?.data
       let errorMsg = "Failed to list product."
-      
+
       if (data) {
         if (typeof data === "string") {
           errorMsg = data
@@ -141,14 +141,14 @@ export function ContractorProductForm() {
       <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
         <div className="flex items-center gap-2 text-slate-900 mb-2">
           <Info className="w-5 h-5 text-jungle-600" />
-          <h2 className="text-lg font-bold">Category Hierarchy</h2>
+          <h2 className="text-lg font-semibold">Category Hierarchy</h2>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Layer */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700">Level 1: Layer (Optional)</label>
-            <select 
+            <select
               {...register("layer")}
               className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-jungle-500/10 focus:border-jungle-600 outline-none transition-all"
             >
@@ -161,7 +161,7 @@ export function ContractorProductForm() {
           {/* Sublayer */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700">Level 2: Sublayer (Optional)</label>
-            <select 
+            <select
               {...register("sublayer")}
               disabled={!selectedLayer}
               className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm disabled:opacity-50 outline-none transition-all"
@@ -175,7 +175,7 @@ export function ContractorProductForm() {
           {/* Sublayer Item */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700">Level 3: Item Category (Optional)</label>
-            <select 
+            <select
               {...register("sublayeritem")}
               disabled={!selectedSublayer}
               className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm disabled:opacity-50 outline-none transition-all"
@@ -189,7 +189,7 @@ export function ContractorProductForm() {
           {/* Bracket */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700">Level 4: Bracket (Optional)</label>
-            <select 
+            <select
               {...register("bracket")}
               disabled={!selectedSublayerItem}
               className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm disabled:opacity-50 outline-none transition-all"
@@ -203,7 +203,7 @@ export function ContractorProductForm() {
           {/* Site */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700">Storage Site (Optional)</label>
-            <select 
+            <select
               {...register("site")}
               className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none transition-all"
             >
@@ -215,21 +215,21 @@ export function ContractorProductForm() {
       </div>
 
       <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-        <h2 className="text-lg font-bold text-slate-900">Product Details</h2>
+        <h2 className="text-lg font-semibold text-slate-900">Product Details</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2 md:col-span-2">
             <label className="text-sm font-semibold text-slate-700">Display Name</label>
-            <input 
+            <input
               {...register("product_name")}
               placeholder="e.g. Portland Cement Grade 42.5"
               className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none transition-all"
             />
             {errors.product_name && <p className="text-xs text-red-500 mt-1">{errors.product_name.message}</p>}
           </div>
-          
+
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700">Initial Quantity</label>
-            <input 
+            <input
               type="number"
               {...register("quantity", { valueAsNumber: true })}
               className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none transition-all"
@@ -239,7 +239,7 @@ export function ContractorProductForm() {
 
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700">Unit of Measure (Optional)</label>
-            <input 
+            <input
               {...register("unit")}
               placeholder="Bags, Tons, etc."
               className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none transition-all"
@@ -249,10 +249,10 @@ export function ContractorProductForm() {
 
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-700">Unit Price (KES)</label>
-            <input 
+            <input
               type="number"
               {...register("price", { valueAsNumber: true })}
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none transition-all font-bold"
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none transition-all font-semibold"
             />
             {errors.price && <p className="text-xs text-red-500 mt-1">{errors.price.message}</p>}
           </div>
@@ -260,7 +260,7 @@ export function ContractorProductForm() {
       </div>
 
       <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-        <h2 className="text-lg font-bold text-slate-900">Payment Options (Optional)</h2>
+        <h2 className="text-lg font-semibold text-slate-900">Payment Options (Optional)</h2>
         <p className="text-xs text-slate-500">Select terms you are willing to accept for this product.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {paymentOptions?.map((opt: any) => (
@@ -276,7 +276,7 @@ export function ContractorProductForm() {
               )}
             >
               <div>
-                <p className="text-sm font-bold">{opt.name}</p>
+                <p className="text-sm font-semibold">{opt.name}</p>
                 <p className="text-[10px] opacity-70 mt-1 uppercase tracking-wider">{opt.payment_type}</p>
               </div>
               {selectedPaymentOptions?.includes(opt.reference) && <Check className="w-5 h-5" />}
@@ -287,17 +287,17 @@ export function ContractorProductForm() {
       </div>
 
       <div className="flex justify-end gap-4">
-        <button 
+        <button
           type="button"
           onClick={() => router.back()}
-          className="px-8 py-3 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors"
+          className="px-8 py-3 text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-8 py-3 bg-jungle-700 hover:bg-jungle-800 text-white rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-jungle-700/20 disabled:opacity-50"
+          className="px-8 py-3 bg-jungle-700 hover:bg-jungle-800 text-white rounded-xl font-semibold flex items-center gap-2 transition-all shadow-lg shadow-jungle-700/20 disabled:opacity-50"
         >
           {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5" />}
           List Product

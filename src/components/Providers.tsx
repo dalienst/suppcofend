@@ -5,11 +5,17 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { useState } from "react"
 import { Toaster } from "react-hot-toast"
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({ 
+  children,
+  session
+}: { 
+  children: React.ReactNode;
+  session?: any;
+}) {
   const [queryClient] = useState(() => new QueryClient())
 
   return (
-    <SessionProvider>
+    <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
         {children}
         <Toaster position="top-right" toastOptions={{ duration: 4000 }} />

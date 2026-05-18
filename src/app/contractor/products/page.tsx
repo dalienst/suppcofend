@@ -42,12 +42,12 @@ export default function ContractorProductsPage() {
     <div className="p-8 space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Products Management</h1>
+          <h1 className="text-2xl font-semibold text-slate-900">Products Management</h1>
           <p className="text-slate-500">Manage and track your products listed on the marketplace.</p>
         </div>
         <Link
           href="/contractor/products/new"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-jungle-700 hover:bg-jungle-800 text-white rounded-xl font-bold transition-all shadow-lg shadow-jungle-700/20"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-jungle-700 hover:bg-jungle-800 text-white rounded-xl font-semibold transition-all shadow-lg shadow-jungle-700/20"
         >
           <Plus className="w-5 h-5" />
           Add Product
@@ -68,7 +68,7 @@ export default function ContractorProductsPage() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
+            <span className="text-xs font-semibold text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
               Backend Filter: active
             </span>
           </div>
@@ -78,7 +78,7 @@ export default function ContractorProductsPage() {
         <div className="overflow-x-auto flex-1">
           <table className="w-full text-left">
             <thead>
-              <tr className="text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
+              <tr className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest border-b border-slate-100">
                 <th className="px-6 py-4">Product Info</th>
                 <th className="px-6 py-4">Stock</th>
                 <th className="px-6 py-4">Price</th>
@@ -104,35 +104,35 @@ export default function ContractorProductsPage() {
               ) : products?.map((product: any) => (
                 <tr key={product.reference} className="hover:bg-slate-50 transition-colors group text-sm">
                   <td className="px-6 py-4">
-                    <Link 
-                      href={`/contractor/products/${product.reference}`} 
+                    <Link
+                      href={`/contractor/products/${product.reference}`}
                       className="flex items-center gap-3 group-hover:text-jungle-600 transition-colors"
                     >
                       <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 group-hover:bg-jungle-50 group-hover:text-jungle-600 transition-colors">
                         <Package className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="font-bold text-slate-900 group-hover:text-jungle-600 transition-colors">{product.product_name}</p>
+                        <p className="font-semibold text-slate-900 group-hover:text-jungle-600 transition-colors">{product.product_name}</p>
                         <p className="text-[10px] text-slate-400 uppercase tracking-tighter">REF: {product.reference}</p>
                       </div>
                     </Link>
                   </td>
                   <td className="px-6 py-4">
-                    <p className="font-bold text-slate-900">{product.quantity}</p>
+                    <p className="font-semibold text-slate-900">{product.quantity}</p>
                     <p className="text-[10px] text-slate-500">{product.unit}</p>
                   </td>
                   <td className="px-6 py-4">
                     <p className="font-extrabold text-slate-900">{Number(product.price).toLocaleString()}</p>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-2 py-1 rounded-md bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider">
+                    <span className="inline-flex items-center px-2 py-1 rounded-md bg-emerald-50 text-emerald-700 text-[10px] font-semibold uppercase tracking-wider">
                       Active
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <Link 
+                    <Link
                       href={`/contractor/products/${product.reference}`}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-jungle-700 bg-jungle-50 hover:bg-jungle-100 rounded-xl transition-all"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-jungle-700 bg-jungle-50 hover:bg-jungle-100 rounded-xl transition-all"
                     >
                       Inspect &rarr;
                     </Link>
@@ -149,12 +149,12 @@ export default function ContractorProductsPage() {
               <Package className="w-8 h-8 text-slate-200" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-900">No products match search criteria</h3>
+              <h3 className="text-lg font-semibold text-slate-900">No products match search criteria</h3>
               <p className="text-slate-500">List new products or try another keyword in the search bar.</p>
             </div>
             <button
               onClick={() => { setSearchQuery(""); setPage(1); }}
-              className="inline-flex items-center gap-2 px-6 py-2 bg-slate-900 text-white rounded-lg text-sm font-bold"
+              className="inline-flex items-center gap-2 px-6 py-2 bg-slate-900 text-white rounded-lg text-sm font-semibold"
             >
               Reset Search
             </button>
@@ -163,7 +163,7 @@ export default function ContractorProductsPage() {
 
         {/* Backend Pagination Footer Controls */}
         {totalCount > 0 && (
-          <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50 text-xs text-slate-500 font-bold shrink-0">
+          <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50 text-xs text-slate-500 font-semibold shrink-0">
             <div>
               Showing {products.length} of {totalCount} total catalog entries
             </div>

@@ -2,62 +2,75 @@
 
 import { useState } from "react"
 import { useLayers } from "@/hooks/useInventory"
-import { 
-  Search, 
-  Filter, 
-  ShoppingBag, 
-  MapPin, 
-  ChevronRight,
+import {
+  Search,
+  ShoppingBag,
+  MapPin,
   ArrowRight,
-  Tag
+  ShieldCheck,
+  Tag,
+  LogIn,
+  Building2
 } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import api from "@/lib/api"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { useSession } from "next-auth/react"
 
 export default function MarketplacePage() {
+  const { data: session } = useSession()
   const [search, setSearch] = useState("")
   const [selectedLayer, setSelectedLayer] = useState<string | null>(null)
-  
+
   const { data: layers } = useLayers()
-  
+
   const { data: products, isLoading } = useQuery({
     queryKey: ["products", selectedLayer, search],
     queryFn: async () => {
       let url = "/api/v1/products/"
       const params = new URLSearchParams()
+      params.append("marketplace", "true")
       if (selectedLayer) params.append("layer__reference", selectedLayer)
       if (search) params.append("search", search)
-      
+
       const response = await api.get(`${url}?${params.toString()}`)
-      return response.data.results
+      return response.data.results || response.data
     }
   })
 
+  const isAuth = !!session
+  const isContractor = (session?.user as any)?.is_contractor
+
   return (
-    <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
+    <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-slate-50">
+
       {/* Sidebar Filters */}
-      <aside className="w-72 bg-white border-r border-slate-200 overflow-auto p-6 space-y-8 hidden lg:block">
+      <aside className="w-72 bg-white border-r border-slate-200 overflow-auto p-6 space-y-8 hidden lg:block shrink-0">
         <div>
-          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest mb-4">Categories</h3>
+          <h3 className="text-xs font-semibold text-slate-400 mb-4">Material Layers</h3>
           <div className="space-y-1">
             <button
               onClick={() => setSelectedLayer(null)}
               className={cn(
-                "w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all",
-                !selectedLayer ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-50"
+                "w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-between",
+                !selectedLayer
+                  ? "bg-slate-900 text-white"
+                  : "text-slate-600 hover:bg-slate-50"
               )}
             >
-              All Products
+              <span>All Products</span>
+              <span className="text-[10px] opacity-60">({products?.length || 0})</span>
             </button>
             {layers?.map((layer: any) => (
               <button
                 key={layer.reference}
                 onClick={() => setSelectedLayer(layer.reference)}
                 className={cn(
-                  "w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all",
-                  selectedLayer === layer.reference ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-50"
+                  "w-full text-left px-3 py-2 rounded-xl text-xs font-semibold transition-all",
+                  selectedLayer === layer.reference
+                    ? "bg-slate-900 text-white"
+                    : "text-slate-600 hover:bg-slate-50"
                 )}
               >
                 {layer.name}
@@ -67,79 +80,109 @@ export default function MarketplacePage() {
         </div>
 
         <div>
-          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest mb-4">Availability</h3>
-          <div className="space-y-3">
-            {["In Stock", "On Order", "Site Specific"].map((label) => (
-              <label key={label} className="flex items-center gap-3 cursor-pointer group">
-                <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900" />
-                <span className="text-sm text-slate-600 group-hover:text-slate-900">{label}</span>
-              </label>
-            ))}
+          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Financing Options</h3>
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-800">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span>Escrow Safe</span>
+            </div>
+            <p className="text-[10px] text-slate-500 leading-relaxed">
+              Procurements are split by supplier. Funds are collected centrally and released only upon verified material delivery.
+            </p>
           </div>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto bg-slate-50 p-8">
+      <main className="flex-1 overflow-auto p-6 sm:p-8 space-y-8">
         <div className="mx-auto space-y-8">
+
+          {/* Top Banner & Search */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Industrial Marketplace</h1>
-              <p className="text-slate-500">Source materials directly from verified suppliers.</p>
+              <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Industrial B2B Marketplace</h1>
+              <p className="text-slate-500 mt-1">Source construction materials directly from verified suppliers.</p>
             </div>
-            
+
             <div className="relative w-full md:w-96">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input 
+              <input
                 type="text"
                 placeholder="Search products, brands, or SKUs..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm outline-none shadow-sm focus:ring-2 focus:ring-slate-900/10 focus:border-slate-900 transition-all"
+                className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-semibold outline-none shadow-sm focus:ring-2 focus:ring-slate-950/10 focus:border-slate-950 transition-all"
               />
             </div>
           </div>
 
+          {/* Anonymous User Promotion Banner */}
+          {!isAuth && (
+            <div className="p-5 bg-gradient-to-r from-jungle-700 to-slate-900 text-white rounded-3xl shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in fade-in duration-300">
+              <div className="space-y-1">
+                <h2 className="font-extrabold text-lg flex items-center gap-2">
+                  <LogIn className="w-5 h-5 text-jungle-300 shrink-0" />
+                  Access Negotiated Corporate Financing
+                </h2>
+                <p className="text-xs text-jungle-100 max-w-xl">
+                  Sign in with your Contractor Account to utilize down-payments, amortized flexible schedules, and unified multi-supplier checkout.
+                </p>
+              </div>
+              <Link
+                href="/login"
+                className="bg-white text-slate-950 px-5 py-2.5 rounded-xl text-xs font-extrabold hover:bg-jungle-50 transition-colors shadow-lg self-start md:self-auto uppercase tracking-wider shrink-0"
+              >
+                Sign In Now
+              </Link>
+            </div>
+          )}
+
           {/* Product Grid */}
           {isLoading ? (
-            <div className="flex items-center justify-center h-64">
-              <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+            <div className="flex items-center justify-center min-h-[300px]">
+              <div className="w-8 h-8 border-4 border-slate-900 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {products?.map((product: any) => (
-                <div key={product.reference} className="bg-white rounded-2xl border border-slate-200 overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all">
-                  <div className="aspect-video bg-slate-100 relative">
-                    {/* Placeholder for product image */}
-                    <div className="absolute inset-0 flex items-center justify-center text-slate-300">
-                      <ShoppingBag className="w-12 h-12" />
-                    </div>
+                <div key={product.reference} className="bg-white rounded-3xl border border-slate-200 overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col h-full">
+                  <div className="aspect-video bg-slate-100 relative shrink-0 flex items-center justify-center border-b border-slate-100">
+                    <ShoppingBag className="w-12 h-12 text-slate-200" />
                     <div className="absolute top-4 left-4">
-                      <span className="px-2 py-1 rounded bg-white/90 backdrop-blur text-[10px] font-bold text-slate-900 uppercase tracking-wider shadow-sm">
+                      <span className="px-2.5 py-1 rounded bg-slate-950 text-[9px] font-bold text-white uppercase tracking-widest shadow-sm">
                         {product.layer}
                       </span>
                     </div>
                   </div>
-                  
-                  <div className="p-6 space-y-4">
-                    <div>
-                      <h3 className="font-bold text-slate-900 group-hover:text-jungle-700 transition-colors">{product.product_name}</h3>
-                      <div className="flex items-center gap-1.5 mt-1 text-slate-500">
-                        <MapPin className="w-3 h-3" />
-                        <span className="text-xs">{product.branch || "Global Delivery"}</span>
+
+                  <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
+                    <div className="space-y-1.5">
+                      <h3 className="font-semibold text-slate-900 group-hover:text-jungle-750 transition-colors text-base line-clamp-1">
+                        {product.product_name}
+                      </h3>
+                      <div className="flex items-center gap-1.5 text-slate-400">
+                        <MapPin className="w-3.5 h-3.5 shrink-0" />
+                        <span className="text-xs truncate">{product.branch_name || "Global Delivery"}</span>
                       </div>
+                      {product.company_name && (
+                        <div className="flex items-center gap-1.5 text-[10px] font-semibold text-slate-500">
+                          <Building2 className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+                          <span>Supplier: {product.company_name}</span>
+                        </div>
+                      )}
                     </div>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-slate-50">
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-4">
                       <div>
-                        <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Price per {product.unit || "unit"}</p>
-                        <p className="text-lg font-extrabold text-slate-900">KES {Number(product.price).toLocaleString()}</p>
+                        <p className="text-[9px] text-slate-400 uppercase font-extrabold tracking-widest">Price per {product.unit || "unit"}</p>
+                        <p className="text-lg font-bold text-slate-950">KES {Number(product.price).toLocaleString()}</p>
                       </div>
-                      <Link 
+                      <Link
                         href={`/marketplace/${product.reference}`}
-                        className="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center hover:bg-jungle-700 transition-all shadow-lg shadow-slate-900/20"
+                        className="w-10 h-10 rounded-full bg-slate-950 text-white flex items-center justify-center hover:bg-jungle-700 transition-all shadow-md shadow-slate-950/20"
+                        title="View Details"
                       >
-                        <ArrowRight className="w-4 h-4" />
+                        <ArrowRight className="w-4.5 h-4.5" />
                       </Link>
                     </div>
                   </div>
@@ -149,30 +192,16 @@ export default function MarketplacePage() {
           )}
 
           {!isLoading && products?.length === 0 && (
-            <div className="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-slate-200">
+            <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
               <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="w-8 h-8 text-slate-300" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900">No products found</h3>
-              <p className="text-slate-500 mt-2">Try adjusting your filters or search terms.</p>
+              <h3 className="text-lg font-semibold text-slate-900">No products found</h3>
+              <p className="text-slate-500 mt-2">Try adjusting your filters or search keywords.</p>
             </div>
           )}
         </div>
       </main>
     </div>
-  )
-}
-
-function Loader2({ className }: { className?: string }) {
-  return (
-    <svg 
-      className={cn("animate-spin", className)} 
-      xmlns="http://www.w3.org/2000/svg" 
-      fill="none" 
-      viewBox="0 0 24 24"
-    >
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-    </svg>
   )
 }
