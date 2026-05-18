@@ -30,7 +30,7 @@ interface CartStore {
 export const useCartStore = create<CartStore>()(
   persist(
     (set: any, get: any) => ({
-      items: [],
+      items: [] as CartItem[],
       addItem: (newItem: CartItem) => {
         const currentItems = get().items
         
