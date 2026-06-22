@@ -22,17 +22,17 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <Link
-              href="/marketplace"
+              href="/login"
               className="px-8 py-4 bg-jungle-700 hover:bg-jungle-800 text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-all shadow-lg shadow-jungle-700/20"
             >
-              Start Procurement
+              Sign In
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              href="/supplier/dashboard"
+              href="/signup"
               className="px-8 py-4 bg-white border-2 border-suppblue-700 text-suppblue-700 hover:bg-suppblue-50 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all"
             >
-              Manage Supplier Store
+              Create Account
             </Link>
           </div>
         </div>

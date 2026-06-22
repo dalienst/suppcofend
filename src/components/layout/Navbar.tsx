@@ -82,7 +82,7 @@ export function Navbar() {
       </div>
 
       <div className="flex items-center gap-4">
-        {session ? (
+        {session?.user ? (
           <>
             {isContractor && mounted && (
               <Link
@@ -107,7 +107,7 @@ export function Navbar() {
               <div className="text-right hidden sm:block">
                 <p className="text-xs font-semibold text-slate-900">{session.user?.name}</p>
                 <p className="text-[10px] text-slate-500 uppercase tracking-wider">
-                  {isSupplier ? "Supplier" : "Contractor"}
+                  {isSupplier ? "Supplier" : isContractor ? "Contractor" : "User"}
                 </p>
               </div>
               <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-white", roleBg)}>
